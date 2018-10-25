@@ -9,7 +9,7 @@ class ItemsModel():
         cur.execute(query, ('name', 'price', 'quantity', 'category', 'reorder_point'))
         conn.commit()
 
-        query_confirm = """SELECT * FROM items WHERE name LIKE %s AND price LIKE %d;"""
+        query_confirm = """SELECT * FROM items WHERE name LIKE %s AND price = %d;"""
         cur.execute(query_confirm, ('name', 'price'))
         self.item = cur.fetchone() 
 
@@ -23,7 +23,7 @@ class ItemsModel():
         return self.items
 
     def get_by_id(self, item_id):
-        query = """SELECT * FROM items WHERE item_id LIKE %d;"""
+        query = """SELECT * FROM items WHERE item_id = %d;"""
         cur.execute(query, ('item_id'))
         self.item = cur.fetchone()
             
@@ -37,7 +37,7 @@ class ItemsModel():
         return self.item
 
     def get_by_name_and_price(self, name, price):
-        query = """SELECT * FROM items WHERE name LIKE %s AND price LIKE %d;"""
+        query = """SELECT * FROM items WHERE name LIKE %s AND price = %d;"""
         cur.execute(query, ('name', 'price'))
         self.item = cur.fetchone() 
 
@@ -51,7 +51,7 @@ class ItemsModel():
         cur.execute(query, (name, price, quantity, category, reorder_point, item_id))
         conn.commit()
 
-        query_confirm = """SELECT * FROM items WHERE item_id LIKE %d;"""
+        query_confirm = """SELECT * FROM items WHERE item_id = %d;"""
         cur.execute(query_confirm, ('item_id'))
         self.item = cur.fetchone()
             

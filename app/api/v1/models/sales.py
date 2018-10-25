@@ -9,9 +9,9 @@ class SalesModel():
         cur.execute(query, ('sale_id', 'item_id', 'item_name', 'quantity', 'price', 'total'))
         conn.commit()
 
-        query_confirm = """SELECT * FROM sale_items WHERE sale_id LIKE %d;"""
+        query_confirm = """SELECT * FROM sale_items WHERE sale_id = %d;"""
         cur.execute(query_confirm, ('sale_id'))
-        self.sale_items = cur.fetchone() 
+        self.sale_items = cur.fetchall() 
 
         return self.sale_items
 
@@ -24,7 +24,7 @@ class SalesModel():
 
         sale_id = self.last_sale_id()
 
-        query_confirm = """SELECT * FROM sales WHERE sale_id LIKE %d;"""
+        query_confirm = """SELECT * FROM sales WHERE sale_id = %d;"""
         cur.execute(query_confirm, ('sale_id'))
         self.sale = cur.fetchone()
 
@@ -52,7 +52,7 @@ class SalesModel():
         return self.sale_items
         
     def get_sale_items_by_sale_id(self, sale_id):
-        query = """SELECT * FROM sale_items WHERE sale_id LIKE %d;"""
+        query = """SELECT * FROM sale_items WHERE sale_id = %d;"""
         cur.execute(query, ('sale_id'))
         self.sale_items = cur.fetchall() 
 
@@ -60,11 +60,9 @@ class SalesModel():
         
 
     def get_sales_by_sale_id(self, sale_id):
-        query = """SELECT * FROM sales WHERE sale_id LIKE %d;"""
+        query = """SELECT * FROM sales WHERE sale_id = %d;"""
         cur.execute(query, ('sale_id'))
         self.sale = cur.fetchone() 
 
         return self.sale
-            
-
-    
+        

@@ -23,7 +23,7 @@ class CategoriesModel():
         return self.categories
 
     def get_by_id(self, category_id):
-        query = """SELECT * FROM categories WHERE category_id LIKE %d;"""
+        query = """SELECT * FROM categories WHERE category_id = %d;"""
         cur.execute(query, ('category_id'))
         self.category = cur.fetchone()
             
@@ -44,7 +44,7 @@ class CategoriesModel():
         cur.execute(query, (name, description, category_id))
         conn.commit()
 
-        query_confirm = """SELECT * FROM categories WHERE category_id LIKE %d;"""
+        query_confirm = """SELECT * FROM categories WHERE category_id = %d;"""
         cur.execute(query_confirm, ('category_id'))
         self.category = cur.fetchone()
             

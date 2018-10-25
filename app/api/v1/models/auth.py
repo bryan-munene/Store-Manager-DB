@@ -39,8 +39,23 @@ class UserModel():
         return check_password_hash(self.user_password, password)
 
     def get_by_id(self, user_id):
-        query = """SELECT * FROM items WHERE user_id LIKE %d;"""
+        query = """SELECT * FROM users WHERE user_id = %d;"""
         cur.execute(query, ('user_id'))
         self.users = cur.fetchone()
             
         return self.users
+
+    def update_user(self, user_id, name, usrnm, pswrd, is_admin):
+        query = """UPDATE users 
+                  SET name = %s, username = %s, password = %s, is_admin = %s
+                  WHERE user_id = %d
+                """
+        cur.execute(query, (name, usrnm, pswrd, is_admin, user_id))
+        conn.commit()
+
+        query_confirm = """SELECT * FROM users WHERE user_id = %d;"""
+        cur.execute(query_confirm, ('user_id'))
+        self.user = cur.fetchone()
+            
+        return self.user
+
