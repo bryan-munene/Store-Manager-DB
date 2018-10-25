@@ -91,12 +91,6 @@ class DatabaseSetup(object):
             date_created timestamp with time zone DEFAULT ('now'::text)::date NOT NULL)
             """
 
-        queries = {
-            'users': query1,
-            'items': query2,
-            'categories': query3,
-            'sales': query4,
-            'sale_items': query5
-            }
+        queries = [query1, query2, query3, query4,query5]  
         
         return queries
