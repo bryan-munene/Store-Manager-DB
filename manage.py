@@ -14,9 +14,7 @@ class DatabaseSetup(object):
         self.conn = psycopg2.connect(url)
         self.cur = self.conn.cursor()
 
-    def connection(self):
-        return self.conn
-
+    
     def create_tables(self):
         queries = self.tables()
         for query in queries:
