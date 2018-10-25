@@ -34,8 +34,8 @@ class DatabaseSetup(object):
 
     def create_default_admin_user(self):
         password_hash = generate_password_hash('Adm1n234')
-        query = "INSERT INTO users(name, username, email, password, is_admin)\
-                VALUES(%s,%s,%s,%s,%s);"
+        query = """INSERT INTO users(name, username, email, password, is_admin)\
+                VALUES(%s,%s,%s,%s,%s);"""
 
         try:
             self.cur.execute(query, ('test', 'testeradmin', 'test@adminmail.com', password_hash, 'True'))
