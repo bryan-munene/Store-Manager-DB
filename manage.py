@@ -18,7 +18,15 @@ class DatabaseSetup(object):
     def create_tables(self):
         queries = self.tables()
         for query in queries:
-            self.cur.execute(query)
+            try:
+                self.cur.execute(query)
+            except psycopg2.ProgrammingError as exc:
+                print (exc.message)
+                self.conn.rollback()
+            except psycopg2.InterfaceError as exc:
+                print (exc.message)
+                self.conn = psycopg2.connect(url)
+                self.cur = self.conn.cursor()
         self.conn.commit()
         self.cur.close()
         self.conn.close()
@@ -29,11 +37,22 @@ class DatabaseSetup(object):
         query = "INSERT INTO users(name, username, email, password, is_admin)\
                 VALUES(%s,%s,%s,%s,%s);"
 
-        self.cur.execute(query, ('test', 'testeradmin',
-                             'test@adminmail.com', password_hash, 'True'))
+        try:
+            self.cur.execute(query, ('test', 'testeradmin', 'test@adminmail.com', password_hash, 'True'))
+        except(Exception, psycopg2.DatabaseError) as error:
+            print (error)
+            try:
+                self.cur.close()
+                self.cur = self.conn.cursor()
+            except:
+                self.conn.close()
+                self.conn = psycopg2.connect(url)
+            self.cur = self.conn.cursor()
+
         self.conn.commit()
         self.cur.close()
         self.conn.close()
+        
 
     
     def commit(self):
@@ -53,10 +72,9 @@ class DatabaseSetup(object):
             """
 
         query2 = """CREATE TABLE IF NOT EXISTS items (
-            product_id serial PRIMARY KEY,
+            item_id serial PRIMARY KEY,
             name varchar(20) NOT NULL,
-            price integer,
-            price integer,
+            price integer NOT NULL,
             quantity integer NOT NULL,
             category varchar(20),
             reorder_point integer NOT NULL,
@@ -92,5 +110,5 @@ class DatabaseSetup(object):
             """
 
         queries = [query1, query2, query3, query4,query5]  
-        
+
         return queries
