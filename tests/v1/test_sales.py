@@ -1,14 +1,8 @@
 import pytest
 from flask import json
 from app import create_app
-from app.api.v1.views.items import Items
-from app.api.v1.views.sales import Sales
-from app.api.v1.views.auth import Users
 from tests.test_helpers import make_sale_helper, sign_in_admin_helper, sign_in_helper, sign_in_helper_2, add_items_helper
 
-testitems = Items()
-testsales = Sales()
-testusers = Users()
 app = create_app(config="testing")
 
 #ORDER INPUT FOR TESTS

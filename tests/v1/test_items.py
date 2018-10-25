@@ -1,12 +1,8 @@
 import pytest
 from flask import json
 from app import create_app
-from app.api.v1.views.items import Items
-from app.api.v1.views.auth import Users
 from tests.test_helpers import make_sale_helper, sign_in_admin_helper, sign_in_helper, add_items_helper
 
-testitems = Items()
-testusers = Users()
 
 config = "testing"
 app = create_app(config)
@@ -42,7 +38,22 @@ sample_item_updates=[
 ]
 
 
+sample_category = [
+    {"name":"painkillers", "description":""},
+    {"name":"", "description":"alleviates pain"},
+    {"name":"", "description":""},
+    {"name":"18+", "description":"for sale to persons above 18 years"},
+    {"name":"painkillers", "description":"alleviates pain"}
+]
 
+
+sample_category_update  = [
+    {"name":"antibiotics", "description":""},
+    {"name":"", "description":"cures bacterial diseases"},
+    {"name":"", "description":""},
+    {"name":"21+", "description":"for sale to persons above 21 years"},
+    {"name":"antibiotics", "description":"cures bacterial diseases"}
+]
 
 '''-------------------------------------------------------------------------------------------------------------------------------'''
 
@@ -263,3 +274,137 @@ def test_delete_item_successfully():
     add_items_helper(test_client)
     response= test_client.delete('/api/v1/items/1' ,content_type='application/json')
     assert(response.status_code == 200)
+
+
+'''-------------------------------------------------------------------------------------------------------------------------------'''
+
+#CATEGORIES
+
+#CREATE CATEGORY
+
+def test_items_category_description_empty():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category[0] ,content_type='application/json')
+    assert(response.status_code==201)
+
+def test_items_category_name_empty():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category[1] ,content_type='application/json')
+    assert(response.status_code==406)
+
+def test_items_category_both_name_and_description_empty():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category[2] ,content_type='application/json')
+    assert(response.status_code==406)
+
+def test_items_category_name_not_str():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category[3] ,content_type='application/json')
+    assert(response.status_code==201)
+
+def test_items_category_both_name_and_description_filled():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category[4] ,content_type='application/json')
+    assert(response.status_code==201)
+
+def test_items_category_duplicate():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category[4] ,content_type='application/json')
+    assert(response.status_code==403)
+
+
+'''-------------------------------------------------------------------------------------------------------------------------------'''
+
+#GET SPECIFIC CATEGORY TESTS
+
+#BY ID
+
+def test_get_category_negative_identifier():
+    test_client=app.test_client()
+    response= test_client.get('/api/v1/categories/-1' ,content_type='application/json')
+    assert(response.status_code == 404)
+
+def test_get_category_not_created():
+    test_client=app.test_client()
+    response= test_client.get('/api/v1/categories/100' ,content_type='application/json')
+    assert(response.status_code == 404)
+
+def test_get_category_successfully():
+    test_client=app.test_client()
+    response= test_client.get('/api/v1/categories/1' ,content_type='application/json')
+    assert(response.status_code == 200)
+
+'''-------------------------------------------------------------------------------------------------------------------------------'''
+
+#GET ALL CATEGORIES TESTS
+
+
+def test_items_category_retrive_all_no_category():
+    test_client=app.test_client()
+    response= test_client.get('/api/v1/categories',content_type='application/json')
+    assert(response.status_code==404)
+
+
+def test_items_category_retrive_all_category_successfully():
+    test_client=app.test_client()
+    add_items_helper(test_client)
+    response= test_client.get('/api/v1/categories',content_type='application/json')
+    assert(response.status_code==200)
+
+'''-------------------------------------------------------------------------------------------------------------------------------'''
+
+#DELETE SPECIFIC CATEGORY TESTS
+
+#BY ID
+
+def test_delete_category_negative_identifier():
+    test_client=app.test_client()
+    response= test_client.delete('/api/v1/categories/-1' ,content_type='application/json')
+    assert(response.status_code == 404)
+
+def test_delete_category_not_created():
+    test_client=app.test_client()
+    response= test_client.delete('/api/v1/categories/100' ,content_type='application/json')
+    assert(response.status_code == 404)
+
+def test_delete_category_successfully():
+    test_client=app.test_client()
+    response= test_client.delete('/api/v1/categories/1' ,content_type='application/json')
+    assert(response.status_code == 200)
+
+'''-------------------------------------------------------------------------------------------------------------------------------'''
+
+#UPDATE CATEGORY
+
+def test_items_update_category_description_empty():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category_update[0] ,content_type='application/json')
+    assert(response.status_code==200)
+
+def test_items_update_category_name_empty():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category_update[1] ,content_type='application/json')
+    assert(response.status_code==406)
+
+def test_items_update_category_both_name_and_description_empty():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category_update[2] ,content_type='application/json')
+    assert(response.status_code==406)
+
+def test_items_update_category_name_not_str():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category_update[3] ,content_type='application/json')
+    assert(response.status_code==200)
+
+def test_items_update_category_both_name_and_description_filled():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category_update[4] ,content_type='application/json')
+    assert(response.status_code==200)
+
+def test_items_update_category_duplicate():
+    test_client=app.test_client()
+    response= test_client.post('/api/v1/categories', data=sample_category_update[4] ,content_type='application/json')
+    assert(response.status_code==403)
+
+
+'''-------------------------------------------------------------------------------------------------------------------------------'''
