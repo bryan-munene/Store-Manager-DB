@@ -116,6 +116,7 @@ def test_items_successfully():
 
 #GET SPECIFIC ITEM TESTS
 
+#BY ID
 
 def test_get_item_negative_identifier():
     test_client=app.test_client()
@@ -130,6 +131,19 @@ def test_get_item_not_created():
 def test_get_item_successfully():
     test_client=app.test_client()
     response= test_client.get('/api/v1/items/1' ,content_type='application/json')
+    assert(response.status_code == 200)
+
+
+#BY CATEGORY
+
+def test_get_items_by_category_not_created():
+    test_client=app.test_client()
+    response= test_client.get('/api/v1/items/painkillers' ,content_type='application/json')
+    assert(response.status_code == 404)
+
+def test_get_items_successfully():
+    test_client=app.test_client()
+    response= test_client.get('/api/v1/items/antibiotics' ,content_type='application/json')
     assert(response.status_code == 200)
 
 '''-------------------------------------------------------------------------------------------------------------------------------'''
