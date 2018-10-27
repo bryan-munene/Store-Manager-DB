@@ -6,7 +6,7 @@ class Config(object):
     DEBUG = False
     CSRF_ENABLED = True
     SECRET_KEY = os.getenv('SECRET')
-    SQL_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQL_DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 class DevelopmentConfig(Config):
@@ -17,7 +17,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     """Configurations for Testing, with a separate test database."""
     TESTING = True
-    SQL_DATABASE_URI = 'postgresql://localhost/test_db'
+    SQL_DATABASE_URL = os.getenv('DATABASE_URL_TEST')
     DEBUG = True
 
 

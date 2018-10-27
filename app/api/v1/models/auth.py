@@ -31,6 +31,13 @@ class UserModel():
 
         return self.user
 
+    def get_user_role_by_email(self, email):
+        query = """SELECT is_admin FROM users WHERE email LIKE %s;"""
+        cur.execute(query, ('email'))
+        self.user_role = cur.fetchone()        
+
+        return self.user_role
+
     def check_password(self, password):
         query_confirm = """SELECT password FROM users WHERE email LIKE %s;"""
         cur.execute(query_confirm, ('email'))
@@ -45,12 +52,12 @@ class UserModel():
             
         return self.users
 
-    def update_user(self, user_id, name, usrnm, pswrd, is_admin):
+    def update_user(self, user_id, name, usrnm, pswrd):
         query = """UPDATE users 
-                  SET name = %s, username = %s, password = %s, is_admin = %s
+                  SET name = %s, username = %s, password = %s
                   WHERE user_id = %d
                 """
-        cur.execute(query, (name, usrnm, pswrd, is_admin, user_id))
+        cur.execute(query, (name, usrnm, pswrd, user_id))
         conn.commit()
 
         query_confirm = """SELECT * FROM users WHERE user_id = %d;"""
@@ -59,3 +66,16 @@ class UserModel():
             
         return self.user
 
+    def update_user_role(self, user_id, is_admin):
+        query = """UPDATE users 
+                  SET is_admin = %s
+                  WHERE user_id = %d
+                """
+        cur.execute(query, (is_admin, user_id))
+        conn.commit()
+
+        query_confirm = """SELECT * FROM users WHERE user_id = %d;"""
+        cur.execute(query_confirm, ('user_id'))
+        self.user = cur.fetchone()
+            
+        return self.user
