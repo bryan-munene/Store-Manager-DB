@@ -105,4 +105,23 @@ class Users(object):
                 "message": "user must be logged in"
             }), 400)
 
-    
+    @users_bp.route("/users", methods=["GET"])
+    @jwt_required
+    def users_all():
+        if not session.get('logged_in_admin'):
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "Admin User must be logged in"
+            }), 401)
+        users = user_model.get_all()
+        if not users:
+            return make_response(jsonify({
+                "status": "not found",
+                "message": "users you are looking for do not esxist"
+            }), 404)
+        else:
+            return make_response(
+                jsonify({
+                    "status": "ok",
+                    "users": users
+                }), 200)
