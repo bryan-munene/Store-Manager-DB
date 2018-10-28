@@ -10,22 +10,22 @@ class SalesModel():
         conn.commit()
 
         query_confirm = """SELECT * FROM sale_items WHERE sale_id = %d;"""
-        cur.execute(query_confirm, ('sale_id'))
+        cur.execute(query_confirm, (sale_id))
         self.sale_items = cur.fetchall() 
 
         return self.sale_items
 
-    def add_sales(self, payment_mode, number_of_items, grand_total, auth):
+    def add_sales(self, payment_mode, items, grand, auth):
         query = """INSERT INTO sales(payment_mode, number_of_items, grand_total, created_by)\
                 VALUES(%d,%d,%s,%d,%d,%d);"""
 
-        cur.execute(query, ('payment_mode', 'items', 'grand', 'auth'))
+        cur.execute(query, (payment_mode, items, grand, auth))
         conn.commit()
 
         sale_id = self.last_sale_id()
 
         query_confirm = """SELECT * FROM sales WHERE sale_id = %d;"""
-        cur.execute(query_confirm, ('sale_id'))
+        cur.execute(query_confirm, (sale_id))
         self.sale = cur.fetchone()
 
         return self.sale

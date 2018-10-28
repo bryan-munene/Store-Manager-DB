@@ -14,7 +14,7 @@ def create_app(config):
     app.secret_key = os.getenv('SECRET_KEY')
     
     url = os.getenv('DATABASE_URL')
-    db = DatabaseSetup()
+    db = DatabaseSetup(url)
 
     db.create_tables()
     db.create_default_admin_user()

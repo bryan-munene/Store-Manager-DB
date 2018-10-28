@@ -10,7 +10,7 @@ class ItemsModel():
         conn.commit()
 
         query_confirm = """SELECT * FROM items WHERE name LIKE %s AND price = %d;"""
-        cur.execute(query_confirm, ('name', 'price'))
+        cur.execute(query_confirm, (name, price))
         self.item = cur.fetchone() 
 
         return self.item
@@ -24,21 +24,21 @@ class ItemsModel():
 
     def get_by_id(self, item_id):
         query = """SELECT * FROM items WHERE item_id = %d;"""
-        cur.execute(query, ('item_id'))
+        cur.execute(query, (item_id))
         self.item = cur.fetchone()
             
         return self.item
 
     def get_by_category(self, category):
         query = """SELECT * FROM items WHERE category LIKE %s;"""
-        cur.execute(query, ('category'))
+        cur.execute(query, (category))
         self.item = cur.fetchall()
             
         return self.item
 
     def get_by_name_and_price(self, name, price):
         query = """SELECT * FROM items WHERE name LIKE %s AND price = %d;"""
-        cur.execute(query, ('name', 'price'))
+        cur.execute(query, (name, price))
         self.item = cur.fetchone() 
 
         return self.item
@@ -52,11 +52,24 @@ class ItemsModel():
         conn.commit()
 
         query_confirm = """SELECT * FROM items WHERE item_id = %d;"""
-        cur.execute(query_confirm, ('item_id'))
+        cur.execute(query_confirm, (item_id))
         self.item = cur.fetchone()
             
         return self.item
 
+    def update_item_quantity(self, item_id, quantity):
+        query = """UPDATE items 
+                  SET quantity = %d
+                  WHERE item_id= %d
+                """
+        cur.execute(query, (quantity, item_id))
+        conn.commit()
+
+        query_confirm = """SELECT * FROM items WHERE item_id = %d;"""
+        cur.execute(query_confirm, (item_id))
+        self.item = cur.fetchone()
+            
+        return self.item
 
     def delete_item(self, item_id):
         query = """DELETE FROM items WHERE item_id = %s"""

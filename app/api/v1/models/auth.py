@@ -13,7 +13,7 @@ class UserModel():
         conn.commit()
 
         query_confirm = """SELECT * FROM users WHERE email LIKE %s;"""
-        cur.execute(query_confirm, ('email'))
+        cur.execute(query_confirm, (email))
         self.user = cur.fetchone()        
 
         return self.user
@@ -26,28 +26,28 @@ class UserModel():
 
     def get_user_by_email(self, email):
         query = """SELECT * FROM users WHERE email LIKE %s;"""
-        cur.execute(query, ('email'))
+        cur.execute(query, (email))
         self.user = cur.fetchone()        
 
         return self.user
 
     def get_user_role_by_email(self, email):
         query = """SELECT is_admin FROM users WHERE email LIKE %s;"""
-        cur.execute(query, ('email'))
+        cur.execute(query, (email))
         self.user_role = cur.fetchone()        
 
         return self.user_role
 
-    def check_password(self, password):
+    def check_password(self, email, password):
         query_confirm = """SELECT password FROM users WHERE email LIKE %s;"""
-        cur.execute(query_confirm, ('email'))
+        cur.execute(query_confirm, (email))
         self.user_password = cur.fetchone() 
        
         return check_password_hash(self.user_password, password)
 
     def get_by_id(self, user_id):
         query = """SELECT * FROM users WHERE user_id = %d;"""
-        cur.execute(query, ('user_id'))
+        cur.execute(query, (user_id))
         self.users = cur.fetchone()
             
         return self.users
@@ -61,7 +61,7 @@ class UserModel():
         conn.commit()
 
         query_confirm = """SELECT * FROM users WHERE user_id = %d;"""
-        cur.execute(query_confirm, ('user_id'))
+        cur.execute(query_confirm, (user_id))
         self.user = cur.fetchone()
             
         return self.user
@@ -75,7 +75,7 @@ class UserModel():
         conn.commit()
 
         query_confirm = """SELECT * FROM users WHERE user_id = %d;"""
-        cur.execute(query_confirm, ('user_id'))
+        cur.execute(query_confirm, (user_id))
         self.user = cur.fetchone()
             
         return self.user
