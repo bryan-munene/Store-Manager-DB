@@ -1,4 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
+import datetime
 from .db_conn import conn, cur
 
 
@@ -26,6 +28,20 @@ class UserModel():
 
     def get_user_by_email(self, email):
         query = """SELECT * FROM users WHERE email LIKE %s;"""
+        cur.execute(query, (email))
+        self.user = cur.fetchone()        
+
+        return self.user
+
+    def get_user_by_id(self, user_id):
+        query = """SELECT * FROM users WHERE user_id LIKE %d;"""
+        cur.execute(query, (user_id))
+        self.user = cur.fetchone()        
+
+        return self.user
+
+    def get_user_password_by_email(self, email):
+        query = """SELECT password FROM users WHERE email LIKE %s;"""
         cur.execute(query, (email))
         self.user = cur.fetchone()        
 
@@ -79,3 +95,14 @@ class UserModel():
         self.user = cur.fetchone()
             
         return self.user
+
+    def access_token(self, email, password):
+        self.password = self.get_user_password_by_email(email)
+        credentials = self.check_password(self.password, password)
+        exp = datetime.timedelta(minutes=15)
+        if credentials:
+            identity = email
+            fresh=True
+            token = create_access_token(identity, fresh, exp)
+            return token
+        return False
