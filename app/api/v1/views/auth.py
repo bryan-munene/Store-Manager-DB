@@ -45,6 +45,49 @@ class Users(object):
                 "login": False
                 }), 401)
 
+    @users_bp.route("/register", methods=["POST"])
+    @jwt_required
+    def register():
+        user_id = get_jwt_identity()
+        print(user_id)
+        user = user_model.get_user_by_id(user_id)
+        if not user['is_admin']:
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "Admin User must be logged in"
+                }), 401)
+        
+        checks = registration_checker(request)
+        if checks:
+            return make_response(jsonify({
+                "status":"not acceptable",
+                "message":checks
+                }), 406)
+
+        data = request.get_json()
+        name = data['name']
+        email = data['email']
+        usrnm = data['username']
+        pswrd = data['password']
+        is_admin = False
+
+        user = user_model.get_user_by_email(email)
+        if user:
+            return make_response(jsonify({
+                "status": "not acceptable",
+                "message": "user already exists"
+                }), 406)
+
+        else:
+            user = user_model.add_user(name, email, usrnm, pswrd, is_admin)
+            users = user_model.get_all()
+            return make_response(jsonify({
+                "status": "created",
+                "user": user,
+                "users": users
+                }), 201)
+
+
     @users_bp.route("/logout")
     @jwt_required
     def logout():
@@ -62,4 +105,4 @@ class Users(object):
                 "message": "user must be logged in"
             }), 400)
 
-   
+    
