@@ -44,3 +44,22 @@ class Users(object):
                 "status": "login error",
                 "login": False
                 }), 401)
+
+    @users_bp.route("/logout")
+    @jwt_required
+    def logout():
+        if session.get('logged_in') or session.get('logged_in_admin'):
+            session['logged_in'] = False
+            session['logged_in_admin'] = False
+            return make_response(jsonify({
+                "status": "okay",
+                "message": "user logged out"
+            }), 200)
+
+        else:
+            return make_response(jsonify({
+                "status": "okay",
+                "message": "user must be logged in"
+            }), 400)
+
+   
