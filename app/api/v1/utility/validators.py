@@ -65,3 +65,20 @@ def registration_checker(request):
             email, re.IGNORECASE):
         return "Email Provided is not in email format"
        
+
+def categories_checker(request):
+    '''
+    this function checks all the inputs for the categories part
+    '''
+    
+    if not request.is_json:
+        return "request not json"
+    
+    data = request.get_json()
+    name = data['name']
+    description = data['email']
+     
+    if name == "" or description =="":
+        return "Please fill all the required fields"
+    
+    

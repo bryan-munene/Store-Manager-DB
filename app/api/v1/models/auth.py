@@ -98,7 +98,7 @@ class UserModel():
 
     def delete_user(self, user_id):
         query = """DELETE FROM users WHERE user_id = %d;;"""
-        cur.execute(query(user_id))
+        cur.execute(query, (user_id))
 
         query_confirm = """SELECT * FROM users WHERE user_id = %d;"""
         cur.execute(query_confirm, (user_id))
