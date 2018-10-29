@@ -184,4 +184,15 @@ class Users(object):
                     }), 404)
 
         else:
-            pass
+            user = user_model.get_user_by_id(user_id)
+            if user:
+                return make_response(
+                    jsonify({
+                        "status": "ok",
+                        "users": user
+                    }), 200)
+            else:
+                return make_response(jsonify({
+                    "status": "not found",
+                    "message": "users you are looking for do not esxist"
+                    }), 404)
