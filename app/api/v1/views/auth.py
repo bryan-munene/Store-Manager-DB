@@ -159,4 +159,29 @@ class Users(object):
                     "users": users
                     }), 201)
                             
-        
+            
+        elif request.method == 'DELETE':
+            user_email = get_jwt_identity()
+            print(user_email)
+            user = user_model.get_user_role_by_email(user_email)
+            if not user:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "Admin User must be logged in"
+                    }), 401)
+
+            users = user_model.delete_user(user_id)
+            if users:
+                return make_response(
+                    jsonify({
+                        "status": "ok",
+                        "users": users
+                    }), 200)
+            else:
+                return make_response(jsonify({
+                    "status": "not found",
+                    "message": "users you are looking for do not esxist"
+                    }), 404)
+
+        else:
+            pass
