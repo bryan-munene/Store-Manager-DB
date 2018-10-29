@@ -48,10 +48,10 @@ class Users(object):
     @users_bp.route("/register", methods=["POST"])
     @jwt_required
     def register():
-        user_id = get_jwt_identity()
-        print(user_id)
-        user = user_model.get_user_by_id(user_id)
-        if not user['is_admin']:
+        user_email = get_jwt_identity()
+        print(user_email)
+        user = user_model.get_user_role_by_email(user_email)
+        if not user:
             return make_response(jsonify({
                 "status": "unauthorised",
                 "message": "Admin User must be logged in"
@@ -125,3 +125,38 @@ class Users(object):
                     "status": "ok",
                     "users": users
                 }), 200)
+
+    @users_bp.route("/users/<int:user_id>", methods=["GET", "PUT", "DELETE"])
+    @jwt_required
+    def specific_user(user_id):
+        if request.method == 'PUT':
+            checks = registration_checker(request)
+            if checks:
+                return make_response(jsonify({
+                    "status":"not acceptable",
+                    "message":checks
+                    }), 406)
+
+            data = request.get_json()
+            name = data['name']
+            email = data['email']
+            usrnm = data['username']
+            pswrd = data['password']
+            
+            user = user_model.get_user_by_email(email)
+            if user:
+                return make_response(jsonify({
+                    "status": "not acceptable",
+                    "message": "user already exists"
+                    }), 406)
+
+            else:
+                user = user_model.update_user(user_id, name, usrnm, pswrd)
+                users = user_model.get_all()
+                return make_response(jsonify({
+                    "status": "created",
+                    "user": user,
+                    "users": users
+                    }), 201)
+                            
+        

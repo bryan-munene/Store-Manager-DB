@@ -96,6 +96,16 @@ class UserModel():
             
         return self.user
 
+    def delete_user(self, user_id):
+        query = """DELETE FROM users WHERE user_id = %d;;"""
+        cur.execute(query(user_id))
+
+        query_confirm = """SELECT * FROM users WHERE user_id = %d;"""
+        cur.execute(query_confirm, (user_id))
+        self.user = cur.fetchone()
+            
+        return self.user
+
     def access_token(self, email, password):
         self.password = self.get_user_password_by_email(email)
         credentials = self.check_password(self.password, password)
