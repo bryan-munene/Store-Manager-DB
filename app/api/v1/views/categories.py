@@ -34,6 +34,22 @@ class Categories(object):
             categories = categories_model.get_all()
             return make_response(jsonify({
                 "status": "created",
-                "user": category,
-                "users": categories
+                "category": category,
+                "categories": categories
                 }), 201)
+    
+    @categories_bp.route('/add_item', methods=["POST"])
+    @jwt_required
+    def add_categories():
+        categories = categories_model.get_all()
+        if not categories:
+            return make_response(jsonify({
+                "status": "not found",
+                "message": "categories do not exists"
+                }), 404)
+
+        else:
+            return make_response(jsonify({
+                "status": "ok",
+                "categories": categories
+                }), 200)
