@@ -1,9 +1,8 @@
 import pytest
 from flask import json
-from app import create_app
 from tests.test_helpers import make_sale_helper, sign_in_admin_helper, sign_in_helper, sign_in_helper_2, add_items_helper
+from .setup_tests import app, db
 
-app = create_app(config="testing")
 
 #ORDER INPUT FOR TESTS
 

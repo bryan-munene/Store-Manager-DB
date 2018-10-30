@@ -10,6 +10,10 @@ url = os.getenv('DATABASE_URL')
 print (url)
 class DatabaseSetup(object):
     '''Sets up db connection'''
+    def __init__(self, url):
+        '''initialize connection and cursor'''
+        self.conn = psycopg2.connect(url)
+        self.cur = self.conn.cursor()
     def create_tables(self):
         '''creates tables by iterating through the list of queries'''
         self.conn = psycopg2.connect(url)
@@ -36,7 +40,8 @@ class DatabaseSetup(object):
         self.cur = self.conn.cursor()
         admin = self.check_users()
         if not admin:
-            password_hash = generate_password_hash('Adm1n234')
+            password = 'Adm1n234'
+            password_hash = generate_password_hash(password, method='sha256')
             query = """INSERT INTO users(name, username, email, password, is_admin)\
                     VALUES(%s,%s,%s,%s,%s);"""
 
@@ -66,8 +71,7 @@ class DatabaseSetup(object):
         query = """SELECT * FROM users WHERE email LIKE 'test@adminmail.com';"""
         self.cur.execute(query)
         self.user = self.cur.fetchone()
-        self.cur.close()
-        self.conn.close()
+        
         return self.user
 
     def tables(self):

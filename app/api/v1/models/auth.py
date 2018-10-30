@@ -7,15 +7,15 @@ from .db_conn import conn, cur
 class UserModel():
     
     def add_user(self, name, email, usrnm, pswrd, is_admin):
-        self.password = generate_password_hash(pswrd, method='pbkdf2:sha256', salt_length=12)
+        self.password = generate_password_hash(pswrd, method='sha256')
         query = """INSERT INTO users(name, username, email, password, is_admin)\
                 VALUES(%s,%s,%s,%s,%s);"""
 
-        cur.execute(query, ('name', 'usrnm', 'email', self.password, 'is_admin'))
+        cur.execute(query, (name, usrnm, email, self.password, is_admin))
         conn.commit()
 
-        query_confirm = """SELECT * FROM users WHERE email LIKE %s;"""
-        cur.execute(query_confirm, (email))
+        query_confirm = """SELECT * FROM users WHERE email = %s;"""
+        cur.execute(query_confirm, (email, ))
         self.user = cur.fetchone()        
 
         return self.user
@@ -27,39 +27,43 @@ class UserModel():
         return self.users
 
     def get_user_by_email(self, email):
-        query = """SELECT * FROM users WHERE email LIKE %s;"""
-        cur.execute(query, (email))
+        query = """SELECT * FROM users WHERE email = %s;"""
+        cur.execute(query, (email, ))
         self.user = cur.fetchone()        
 
         return self.user
 
     def get_user_by_id(self, user_id):
-        query = """SELECT * FROM users WHERE user_id LIKE %d;"""
+        query = """SELECT * FROM users WHERE user_id = %d;"""
         cur.execute(query, (user_id))
         self.user = cur.fetchone()        
 
         return self.user
 
     def get_user_password_by_email(self, email):
-        query = """SELECT password FROM users WHERE email LIKE %s;"""
-        cur.execute(query, (email))
+        query = """SELECT password FROM users WHERE email = %s;"""
+        cur.execute(query, (email, ))
+        self.user = cur.fetchone()        
+
+        return self.user
+    
+    def get_user_username_by_email(self, email):
+        query = """SELECT username FROM users WHERE email = %s;"""
+        cur.execute(query, (email, ))
         self.user = cur.fetchone()        
 
         return self.user
 
     def get_user_role_by_email(self, email):
-        query = """SELECT is_admin FROM users WHERE email LIKE %s;"""
-        cur.execute(query, (email))
+        query = """SELECT is_admin FROM users WHERE email = %s;"""
+        cur.execute(query, (email, ))
         self.user_role = cur.fetchone()        
 
         return self.user_role
 
-    def check_password(self, email, password):
-        query_confirm = """SELECT password FROM users WHERE email LIKE %s;"""
-        cur.execute(query_confirm, (email))
-        self.user_password = cur.fetchone() 
-       
-        return check_password_hash(self.user_password, password)
+    def check_credentials(self, user_password_hash, password):
+        
+        return check_password_hash(user_password_hash, password)
 
     def get_by_id(self, user_id):
         query = """SELECT * FROM users WHERE user_id = %d;"""
@@ -107,8 +111,9 @@ class UserModel():
         return self.user
 
     def access_token(self, email, password):
-        self.password = self.get_user_password_by_email(email)
-        credentials = self.check_password(self.password, password)
+        self.password_output = self.get_user_password_by_email(email)
+        self.password = self.password_output[0]
+        credentials = self.check_credentials(self.password, password)
         exp = datetime.timedelta(minutes=15)
         if credentials:
             identity = email

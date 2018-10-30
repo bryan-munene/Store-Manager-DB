@@ -5,7 +5,7 @@ import datetime
 from ..models.auth import UserModel
 from ..utility.validators import json_checker, login_checker, registration_checker
 
-users_bp = Blueprint('users', __name__, url_prefix='/api/v1')
+users_bp = Blueprint('users', __name__, url_prefix='/api/v2')
 
 user_model = UserModel()
 
@@ -31,10 +31,11 @@ class Users(object):
             }), 404)
 
         credentials = user_model.access_token(email, password)
+        username = user_model.get_user_username_by_email(email)
         if credentials:
             return make_response(jsonify({
                 "status": "user logged in",
-                "username": user['username'],
+                "username": username,
                 "login": True,
                 "token": credentials
                 }), 200)

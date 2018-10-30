@@ -1,11 +1,8 @@
 import pytest
 from flask import json
-from app import create_app
 from tests.test_helpers import make_sale_helper, sign_in_admin_helper, sign_in_helper, add_items_helper
+from .setup_tests import app, db
 
-
-config = "testing"
-app = create_app(config)
 
 
 sample_item=[

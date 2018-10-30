@@ -1,11 +1,7 @@
 import pytest
 from flask import json
-from app import create_app
 from tests.test_helpers import sign_in_admin_helper, sign_in_helper, sign_up_helper
-
-
-config = "testing"
-app = create_app(config)
+from .setup_tests import app, db
 
 
 #REGISTRATION INPUT FOR TESTS
