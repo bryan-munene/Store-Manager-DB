@@ -40,7 +40,7 @@ class Categories(object):
     
     @categories_bp.route('/add_item', methods=["POST"])
     @jwt_required
-    def add_categories():
+    def get_all_categories():
         categories = categories_model.get_all()
         if not categories:
             return make_response(jsonify({
@@ -53,3 +53,5 @@ class Categories(object):
                 "status": "ok",
                 "categories": categories
                 }), 200)
+
+    

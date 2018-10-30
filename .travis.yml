@@ -1,20 +1,24 @@
 language: python
+env:
+  - FLASK_APP="run.py"
+  - APP_SETTINGS="development"
+  - DATABASE_URL=host='localhost' port='5432' user='postgres' password='root' dbname='store_manager'
+  - DATABASE_URL_TEST=host='localhost' user='postgres' password='root' dbname='store_manager_test'
+  - SECRET_KEY=" \87b\0ha\j&^\*kd\fg4\ugy\8gq\4tt\0nj\bga\g$%\^&*\()d\l*7\*&^\&$%\bjd\bnj\bns\236\7$%\^&*\()i\nkn\fgs\dgj\n4k\*&6\%gb\hbj\fgh\}|{\POI\IUP\{O}\dhf\jhb\$%^\&*(\!@#\$@!\@#{\}{{\}:{\LMk\ "
 python:
   - "3.6"
-  
-
+services:
+  - postgresql
 install:
   - pip install -r requirements.txt
   - pip install coveralls codecov
   - pip install codeclimate-test-reporter
-
-
+before_script:
+  - psql -c 'create database store_manager_test;' -U postgres
 script:
-  - pytest
-
+  - coverage run --source=tests/v1 -m pytest && coverage report
 after_success:
   - coveralls
   - codeclimate-test-reporter
-  
 cache: 
     - pip

@@ -16,7 +16,7 @@ def create_app(config):
     app.config["TESTING"] = True
     app.secret_key = os.getenv('SECRET_KEY')
     
-    app.config["JWT_SECRET_KEY"]= os.urandom(12)
+    app.config["JWT_SECRET_KEY"]= os.getenv('SECRET_KEY')
     jwt.init_app(app)
 
     url = os.getenv('DATABASE_URL')

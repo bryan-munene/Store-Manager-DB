@@ -1,5 +1,6 @@
 import os
 import psycopg2
+import psycopg2.extras
 from flask import Flask
 from werkzeug.security import generate_password_hash
 from instance.config import app_config
@@ -13,11 +14,11 @@ class DatabaseSetup(object):
     def __init__(self, url):
         '''initialize connection and cursor'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor()
+        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
     def create_tables(self):
         '''creates tables by iterating through the list of queries'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor()
+        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
         queries = self.tables()
         for query in queries:
             try:
@@ -28,7 +29,7 @@ class DatabaseSetup(object):
             except psycopg2.InterfaceError as exc:
                 print (exc)
                 self.conn = psycopg2.connect(url)
-                self.cur = self.conn.cursor()
+                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
         self.conn.commit()
         self.cur.close()
         self.conn.close()
@@ -37,7 +38,7 @@ class DatabaseSetup(object):
     def create_default_admin_user(self):
         '''creates the base user who is an admin user'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor()
+        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
         admin = self.check_users()
         if not admin:
             password = 'Adm1n234'
@@ -51,11 +52,11 @@ class DatabaseSetup(object):
                 print (error)
                 try:
                     self.cur.close()
-                    self.cur = self.conn.cursor()
+                    self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
                 except:
                     self.conn.close()
                     self.conn = psycopg2.connect(url)
-                self.cur = self.conn.cursor()
+                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
 
             self.conn.commit()
             self.cur.close()
@@ -67,7 +68,7 @@ class DatabaseSetup(object):
     def check_users(self):
         '''checks if the admin user already exists'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor()
+        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
         query = """SELECT * FROM users WHERE email LIKE 'test@adminmail.com';"""
         self.cur.execute(query)
         self.user = self.cur.fetchone()
@@ -126,7 +127,25 @@ class DatabaseSetup(object):
             created_by integer NOT NULL REFERENCES users(user_id),
             date_created timestamp with time zone DEFAULT ('now'::text)::date NOT NULL)
             """
+        
+        query6 = """CREATE TABLE IF NOT EXISTS blacklist_token (
+            token_id serial PRIMARY KEY NOT NULL,
+            token varchar(20) NOT NULL)
+            """
 
-        queries = [query1, query2, query3, query4,query5]  
+        queries = [query1, query2, query3, query4, query5, query6]  
+
+        return queries
+
+    def schema(self):
+        '''drops the schema and recreates it'''
+        query1 = """DROP TABLE IF NOT EXISTS users CASCADE;"""
+        query2 = """DROP TABLE IF NOT EXISTS categories CASCADE;"""
+        query3 = """DROP TABLE IF NOT EXISTS items CASCADE;"""
+        query4 = """DROP TABLE IF NOT EXISTS sales CASCADE;"""
+        query5 = """DROP TABLE IF NOT EXISTS sale_items CASCADE;"""
+        query6 = """DROP TABLE IF NOT EXISTS blacklist_token CASCADE;"""
+
+        queries = [query1, query2, query3, query4, query5, query6]  
 
         return queries
