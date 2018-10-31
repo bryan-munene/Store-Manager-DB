@@ -135,3 +135,39 @@ class Sales(object):
                 "status": "not acceptable",
                 "message": "You must order atleast one item"
             }), 406)
+
+    @sales_bp.route("/sales", methods=["GET"])
+    @jwt_required
+    def sales_all():
+        auth_user = get_jwt_identity()
+        if not auth_user:
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "User must be logged in"
+            }), 401)
+    
+        auth_user_role = auth_user[5]
+        if not auth_user_role:
+            user_id = auth_user[0]
+            sales = sales_model.get_sales_by_user_id(user_id)
+            if not sales:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "You are not authorised to view this record!"
+                    }), 401)
+            return make_response(jsonify({
+                "status": "ok",
+                "sales": sales
+                }), 200)
+            
+        sales = sales_model.get_all_sales()
+
+        if not sales:
+            return make_response(jsonify({
+                "status": "not found",
+                "message": "sales don't exist"
+            }), 404)
+        return make_response(jsonify({
+            "status": "ok",
+            "sales": sales
+            }), 200)

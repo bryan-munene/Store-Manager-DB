@@ -80,10 +80,17 @@ class SalesModel():
 
     def get_sales_by_sale_id(self, sale_id):
         query = """SELECT * FROM sales WHERE sale_id = %d;"""
-        cur.execute(query, ('sale_id'))
+        cur.execute(query, (sale_id))
         self.sale = cur.fetchone() 
 
         return self.sale
         
     def sale_items_list(self):
         return sale_items
+
+    def get_sales_by_user_id(self, user_id):
+        query = """SELECT * FROM sales WHERE created_by = %d;"""
+        cur.execute(query, (user_id))
+        self.sales = cur.fetchall() 
+
+        return self.sales
