@@ -140,7 +140,7 @@ class Items(object):
             reorder_point = data['reorder_point']
             category_id = data['category_id']
             
-            if name == "" or price == "" or image == "" or quantity == "":
+            if price == "" or image == "" or quantity == "":
                 return make_response(jsonify({
                     "status": "not acceptable",
                     "message": "all fields must be filled"
@@ -153,13 +153,7 @@ class Items(object):
                         "message": "price not valid"
                     }), 400)
 
-            if not name.isalpha():
-                return make_response(
-                    jsonify({
-                        "status": "not acceptable",
-                        "message": "item name not valid"
-                    }), 400)
-
+            
             category = categories_model.get_by_id(category_id)
             if not category:
                 return make_response(jsonify({
@@ -184,7 +178,35 @@ class Items(object):
                     "items": items
                     }), 201)
                             
-         
+            
+        elif request.method == 'DELETE':
+            auth_user = get_jwt_identity()
+            if not auth_user:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "User must be logged in"
+                }), 401)
+        
+            auth_user_role = auth_user[5]
+            if not auth_user_role:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "Admin User must be logged in"
+                }), 401) 
+
+            items = items_model.delete_item(item_id)
+            if items:
+                return make_response(
+                    jsonify({
+                        "status": "ok",
+                        "items": items
+                    }), 200)
+            else:
+                return make_response(jsonify({
+                    "status": "not found",
+                    "message": "users you are looking for do not esxist"
+                    }), 404)
+
         else:
             auth_user = get_jwt_identity()
             if not auth_user:
