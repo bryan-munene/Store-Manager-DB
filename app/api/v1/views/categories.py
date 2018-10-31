@@ -99,4 +99,33 @@ class Categories(object):
                     "categories": categories
                     }), 201)
                             
-       
+            
+        elif request.method == 'DELETE':
+            auth_user = get_jwt_identity()
+            if not auth_user:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "User must be logged in"
+                }), 401)
+        
+            auth_user_role = auth_user[5]
+            if not auth_user_role:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "Admin User must be logged in"
+                }), 401) 
+
+            categories = categories_model.delete_category(category_id)
+            if users:
+                return make_response(
+                    jsonify({
+                        "status": "ok",
+                        "categories": categories
+                    }), 200)
+            else:
+                return make_response(jsonify({
+                    "status": "not found",
+                    "message": "users you are looking for do not esxist"
+                    }), 404)
+
+        
