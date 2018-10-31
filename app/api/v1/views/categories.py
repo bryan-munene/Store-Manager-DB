@@ -155,5 +155,5 @@ class Categories(object):
             else:
                 return make_response(jsonify({
                     "status": "not found",
-                    "message": "users you are looking for do not esxist"
+                    "message": "category you are looking for do not esxist"
                     }), 404)
