@@ -1,12 +1,31 @@
 from .db_conn import conn, cur
-
-class SalesModel():
+sale_items = []
         
-    def add_sale_items(self, sale_id, item_id, item_name, quantity, price, total):
-        query = """INSERT INTO sale_items(sale_id, item_id, item_name, quantity, price, total)\
+class SalesModel():
+    
+    def add_sale_items_list(self, item_id, name, quantity, price, total, auth):
+        self.sale_item_id = len(sale_items)+1
+        
+        
+        sale_item = {
+            "sale_item_id": self.sale_item_id,
+            "item_id": item_id,
+            "item_name": name,
+            "quantity": quantity,
+            "price": price,
+            "total": total,
+            "auth": auth
+            }
+
+        sale_items.append(sale_item)
+
+        return sale_item
+
+    def add_sale_items(self, sale_id, item_id, item_name, quantity, price, total, auth):
+        query = """INSERT INTO sale_items(sale_id, item_id, item_name, quantity, price, total, created_by)\
                 VALUES(%d,%d,%s,%d,%d,%d);"""
 
-        cur.execute(query, ('sale_id', 'item_id', 'item_name', 'quantity', 'price', 'total'))
+        cur.execute(query, (sale_id, item_id, item_name, quantity, price, total, auth))
         conn.commit()
 
         query_confirm = """SELECT * FROM sale_items WHERE sale_id = %d;"""
@@ -66,3 +85,5 @@ class SalesModel():
 
         return self.sale
         
+    def sale_items_list(self):
+        return sale_items
