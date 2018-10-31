@@ -9,7 +9,7 @@ categories_bp = Blueprint('categories', __name__, url_prefix='/api/v2')
 
 
 class Categories(object):
-    @categories_bp.route('/add_item', methods=["POST"])
+    @categories_bp.route('/add_category', methods=["POST"])
     @jwt_required
     def add_categories():
         checks = categories_checker(request)
@@ -21,7 +21,7 @@ class Categories(object):
 
         data = request.get_json()
         name = data['name']
-        description = data['email']
+        description = data['description']
         
         category = categories_model.get_by_name(name)
         if category:
@@ -38,7 +38,7 @@ class Categories(object):
                 "categories": categories
                 }), 201)
     
-    @categories_bp.route('/add_item', methods=["POST"])
+    @categories_bp.route('/categories', methods=["POST"])
     @jwt_required
     def get_all_categories():
         categories = categories_model.get_all()
@@ -54,4 +54,49 @@ class Categories(object):
                 "categories": categories
                 }), 200)
 
-    
+    @categories_bp.route("/categories/<int:category_id>", methods=["GET", "PUT", "DELETE"])
+    @jwt_required
+    def specific_user(category_id):
+        if request.method == 'PUT':
+            auth_user = get_jwt_identity()
+            if not auth_user:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "User must be logged in"
+                }), 401)
+        
+            auth_user_role = auth_user[5]
+            if not auth_user_role:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "You are not authorised to view this record!"
+                    }), 401)
+            
+            checks = categories_checker(request)
+            if checks:
+                return make_response(jsonify({
+                    "status":"not acceptable",
+                    "message":checks
+                    }), 406)
+
+            data = request.get_json()
+            name = data['name']
+            description = data['description']
+            
+            category = categories_model.get_by_id(category_id)
+            if not category:
+                return make_response(jsonify({
+                    "status": "not acceptable",
+                    "message": "category does not exist"
+                    }), 406)
+
+            else:
+                category = categories_model.update_category(category_id, name, description)
+                categories = categories_model.get_all()
+                return make_response(jsonify({
+                    "status": "created",
+                    "category": category,
+                    "categories": categories
+                    }), 201)
+                            
+       
