@@ -38,6 +38,30 @@ def json_checker(request):
         return False
     return True
 
+
+def system_error_login(request):
+    try:
+        data = request.get_json()
+        email = data['email']
+        password = data['password']
+    except KeyError as e:
+        return e
+    except NameError as e:
+        return e
+
+def system_error_registration(request):
+    try:
+        data = request.get_json()
+        name = data['name']
+        email = data['email']
+        usrnm = data['username']
+        pswrd = data['password']
+        pswrd2 = data['password2']
+    except KeyError as e:
+        return e
+    except NameError as e:
+        return e
+
 def registration_checker(request):
     '''
     this function checks all the inputs for the registration part

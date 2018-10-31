@@ -115,10 +115,10 @@ class UserModel():
         self.password = self.password_output[0]
         self.user = self.get_user_by_email(email)
         credentials = self.check_credentials(self.password, password)
-        exp = datetime.timedelta(minutes=60)
         if credentials:
             identity = self.user
             fresh=True
+            exp = datetime.timedelta(minutes=60)
             token = create_access_token(identity, fresh, exp)
             return token
         return False

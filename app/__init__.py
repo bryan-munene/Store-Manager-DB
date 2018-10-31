@@ -23,8 +23,8 @@ def create_app(config):
     db = DatabaseSetup(url)
 
 
-    db.create_tables()
-    db.create_default_admin_user()
+    db.create_tables(url)
+    db.create_default_admin_user(url)
 
     from app.api.v1.views.auth import users_bp
     app.register_blueprint(users_bp)

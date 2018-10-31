@@ -3,7 +3,7 @@ from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, g
 import datetime
 
 from ..models.auth import UserModel
-from ..utility.validators import json_checker, login_checker, registration_checker
+from ..utility.validators import json_checker, login_checker, registration_checker, system_error_login, system_error_registration
 
 users_bp = Blueprint('users', __name__, url_prefix='/api/v2')
 
@@ -12,6 +12,12 @@ user_model = UserModel()
 class Users(object):
     @users_bp.route("/login", methods=["POST"])
     def user_login():
+        sys_checks = system_error_login(request)
+        if sys_checks:
+            return make_response(jsonify({
+                "status":"we encountered a system error try again",
+                "message":sys_checks
+                }), 500)
         checks = login_checker(request)
         if checks:
             return make_response(jsonify({
@@ -57,7 +63,12 @@ class Users(object):
                 "status": "unauthorised",
                 "message": "Admin User must be logged in"
                 }), 401)
-        
+        sys_checks = system_error_registration(request)
+        if sys_checks:
+            return make_response(jsonify({
+                "status":"we encountered a system error try again",
+                "message":sys_checks
+                }), 500)
         checks = registration_checker(request)
         if checks:
             return make_response(jsonify({
@@ -89,28 +100,16 @@ class Users(object):
                 }), 201)
 
 
-    @users_bp.route("/logout")
-    @jwt_required
-    def logout():
-        if session.get('logged_in') or session.get('logged_in_admin'):
-            session['logged_in'] = False
-            session['logged_in_admin'] = False
-            return make_response(jsonify({
-                "status": "okay",
-                "message": "user logged out"
-            }), 200)
-
-        else:
-            return make_response(jsonify({
-                "status": "okay",
-                "message": "user must be logged in"
-            }), 400)
+    
 
     @users_bp.route("/users", methods=["GET"])
     @jwt_required
     def users_all():
-        """ auth_user_email = get_jwt_identity()
-        if not auth_user_email:
+        auth_user = get_jwt_identity()
+        print(auth_user)
+        auth_user_role = auth_user['is_admin']
+        print(auth_user_role)
+        """ if not auth_user_email:
             return make_response(jsonify({
                 "status": "unauthorised",
                 "message": "User must be logged in"
@@ -121,8 +120,8 @@ class Users(object):
             return make_response(jsonify({
                 "status": "unauthorised",
                 "message": "Admin User must be logged in"
-            }), 401)
- """
+            }), 401) """
+
         users = user_model.get_all()
         if not users:
             return make_response(jsonify({

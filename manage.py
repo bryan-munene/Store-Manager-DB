@@ -6,16 +6,14 @@ from werkzeug.security import generate_password_hash
 from instance.config import app_config
 
 
-url = os.getenv('DATABASE_URL')
 
-print (url)
 class DatabaseSetup(object):
     '''Sets up db connection'''
     def __init__(self, url):
         '''initialize connection and cursor'''
         self.conn = psycopg2.connect(url)
         self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
-    def create_tables(self):
+    def create_tables(self, url):
         '''creates tables by iterating through the list of queries'''
         self.conn = psycopg2.connect(url)
         self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
@@ -34,12 +32,30 @@ class DatabaseSetup(object):
         self.cur.close()
         self.conn.close()
         
+    def drop_tables(self, url):
+        '''drop tables by iterating through the list of queries'''
+        self.conn = psycopg2.connect(url)
+        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
+        queries = self.schema()
+        for query in queries:
+            try:
+                self.cur.execute(query)
+            except psycopg2.ProgrammingError as exc:
+                print (exc)
+                self.conn.rollback()
+            except psycopg2.InterfaceError as exc:
+                print (exc)
+                self.conn = psycopg2.connect(url)
+                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
+        self.conn.commit()
+        self.cur.close()
+        self.conn.close()
 
-    def create_default_admin_user(self):
+    def create_default_admin_user(self, url):
         '''creates the base user who is an admin user'''
         self.conn = psycopg2.connect(url)
         self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
-        admin = self.check_users()
+        admin = self.check_users(url)
         if not admin:
             password = 'Adm1n234'
             password_hash = generate_password_hash(password, method='sha256')
@@ -65,7 +81,7 @@ class DatabaseSetup(object):
             return False
         
         
-    def check_users(self):
+    def check_users(self, url):
         '''checks if the admin user already exists'''
         self.conn = psycopg2.connect(url)
         self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
@@ -139,12 +155,12 @@ class DatabaseSetup(object):
 
     def schema(self):
         '''drops the schema and recreates it'''
-        query1 = """DROP TABLE IF NOT EXISTS users CASCADE;"""
-        query2 = """DROP TABLE IF NOT EXISTS categories CASCADE;"""
-        query3 = """DROP TABLE IF NOT EXISTS items CASCADE;"""
-        query4 = """DROP TABLE IF NOT EXISTS sales CASCADE;"""
-        query5 = """DROP TABLE IF NOT EXISTS sale_items CASCADE;"""
-        query6 = """DROP TABLE IF NOT EXISTS blacklist_token CASCADE;"""
+        query1 = """DROP TABLE IF EXISTS users CASCADE;"""
+        query2 = """DROP TABLE IF EXISTS categories CASCADE;"""
+        query3 = """DROP TABLE IF EXISTS items CASCADE;"""
+        query4 = """DROP TABLE IF EXISTS sales CASCADE;"""
+        query5 = """DROP TABLE IF EXISTS sale_items CASCADE;"""
+        query6 = """DROP TABLE IF EXISTS blacklist_token CASCADE;"""
 
         queries = [query1, query2, query3, query4, query5, query6]  
 
