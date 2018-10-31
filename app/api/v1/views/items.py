@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response, session
+from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from ..models.items import ItemsModel
 from ..models.categories import CategoriesModel
 
@@ -16,7 +17,22 @@ def index():
 
 class Items(object):
     @items_bp.route('/add_item', methods=["POST"])
+    @jwt_required
     def add_items():
+        auth_user = get_jwt_identity()
+        if not auth_user:
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "User must be logged in"
+            }), 401)
+    
+        auth_user_role = auth_user[5]
+        if not auth_user_role:
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "You are not authorised to view this record!"
+                }), 401)
+                
         if not request.is_json:
             return make_response(
                 jsonify({
@@ -90,3 +106,18 @@ class Items(object):
                     "status": "ok",
                     "items": items
                 }), 200)
+
+    @items_bp.route('/items/<int:item_id>', methods=["GET", "PUT", "DELETE"])
+    def specific_item(item_id):
+        item = items_model.get_by_id(item_id)
+        if item:
+            return make_response(
+                jsonify({
+                    "status": "ok",
+                    "item": item
+                }), 200)
+        else:
+            return make_response(
+                jsonify({
+                    'error': 'the item does not exist'
+                }), 404)
