@@ -43,7 +43,7 @@ class ItemsModel():
 
         return self.item
 
-    def update_item(self, item_id, name, price, quantity, category, reorder_point):
+    def update_item(self, item_id, price, quantity, category, reorder_point):
         query = """UPDATE items 
                   SET name = %s, price = %d, quantity = %d, category = %s, reorder_point = %d 
                   WHERE item_id= %d

@@ -32,7 +32,7 @@ class Items(object):
                 "status": "unauthorised",
                 "message": "You are not authorised to view this record!"
                 }), 401)
-                
+
         if not request.is_json:
             return make_response(
                 jsonify({
@@ -93,6 +93,7 @@ class Items(object):
             }), 201)
 
     @items_bp.route("/items", methods=["GET"])
+    @jwt_required
     def items_all():
         items = items_model.get_all()
         if not items:
@@ -108,16 +109,106 @@ class Items(object):
                 }), 200)
 
     @items_bp.route('/items/<int:item_id>', methods=["GET", "PUT", "DELETE"])
+    @jwt_required
     def specific_item(item_id):
-        item = items_model.get_by_id(item_id)
-        if item:
-            return make_response(
-                jsonify({
-                    "status": "ok",
-                    "item": item
-                }), 200)
+        if request.method == 'PUT':
+            auth_user = get_jwt_identity()
+            if not auth_user:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "User must be logged in"
+                }), 401)
+        
+            auth_user_role = auth_user[5]
+            if not auth_user_role:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "You are not authorised to view this record!"
+                    }), 401)
+            
+            if not request.is_json:
+                return make_response(
+                    jsonify({
+                        "status": "wrong format",
+                        "messenge": "request not json"
+                    }), 400)
+    
+            data = request.get_json()
+            price = data['price']
+            image = data['image']
+            quantity = data['quantity']
+            reorder_point = data['reorder_point']
+            category_id = data['category_id']
+            
+            if name == "" or price == "" or image == "" or quantity == "":
+                return make_response(jsonify({
+                    "status": "not acceptable",
+                    "message": "all fields must be filled"
+                }), 406)
+
+            if not price.isdigit():
+                return make_response(
+                    jsonify({
+                        "status": "not acceptable",
+                        "message": "price not valid"
+                    }), 400)
+
+            if not name.isalpha():
+                return make_response(
+                    jsonify({
+                        "status": "not acceptable",
+                        "message": "item name not valid"
+                    }), 400)
+
+            category = categories_model.get_by_id(category_id)
+            if not category:
+                return make_response(jsonify({
+                    "status": "not found",
+                    "message": "category does not esxist"
+                    }), 404)
+
+            item = items_model.get_by_id(item_id)
+            if not item:
+                return make_response(
+                    jsonify({
+                        "status": "forbidden",
+                        "message": "item does not exist"
+                        }), 403)
+
+            else:
+                item = items_model.update_item(item_id, price, quantity, category, reorder_point)
+                items = items_model.get_all()
+                return make_response(jsonify({
+                    "status": "created",
+                    "item": item,
+                    "items": items
+                    }), 201)
+                            
+         
         else:
-            return make_response(
-                jsonify({
-                    'error': 'the item does not exist'
-                }), 404)
+            auth_user = get_jwt_identity()
+            if not auth_user:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "User must be logged in"
+                }), 401)
+        
+            auth_user_role = auth_user[5]
+            if not auth_user_role:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "Admin User must be logged in"
+                }), 401) 
+            item = items_model.get_by_id(item_id)
+            if item:
+                return make_response(
+                    jsonify({
+                        "status": "ok",
+                        "item": item
+                    }), 200)
+            else:
+                return make_response(
+                    jsonify({
+                        'error': 'the item does not exist'
+                    }), 404)
+                    
