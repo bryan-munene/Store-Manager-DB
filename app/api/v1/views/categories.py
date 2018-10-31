@@ -128,4 +128,32 @@ class Categories(object):
                     "message": "users you are looking for do not esxist"
                     }), 404)
 
+        else:
+            auth_user = get_jwt_identity()
+            if not auth_user:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "User must be logged in"
+                }), 401)
         
+            auth_user_role = auth_user[5]
+            if not auth_user_role:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "Admin User must be logged in"
+                }), 401) 
+            
+            
+            
+            category = categories_model.get_by_id(category_id)
+            if category:
+                return make_response(
+                    jsonify({
+                        "status": "ok",
+                        "category": category
+                    }), 200)
+            else:
+                return make_response(jsonify({
+                    "status": "not found",
+                    "message": "users you are looking for do not esxist"
+                    }), 404)
