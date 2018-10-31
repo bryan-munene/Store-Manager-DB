@@ -6,7 +6,7 @@ from ..models.categories import CategoriesModel
 items_model = ItemsModel()
 categories_model = CategoriesModel()
 
-items_bp = Blueprint('items', __name__, url_prefix='/api/v1')
+items_bp = Blueprint('items', __name__, url_prefix='/api/v2')
 
 
 

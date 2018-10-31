@@ -3,7 +3,7 @@ from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, g
 from ..models.sales import SalesModel
 from ..models.items import ItemsModel
 
-sales_bp = Blueprint('sales', __name__, url_prefix='/api/v1')
+sales_bp = Blueprint('sales', __name__, url_prefix='/api/v2')
 
 
 sales_model = SalesModel()
