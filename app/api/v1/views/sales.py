@@ -171,3 +171,48 @@ class Sales(object):
             "status": "ok",
             "sales": sales
             }), 200)
+
+    @sales_bp.route('/sales/<int:sale_id>', methods=['GET'])
+    @jwt_required
+    def specific_sale(sale_id):
+        auth_user = get_jwt_identity()
+        if not auth_user:
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "User must be logged in"
+            }), 401)
+    
+        auth_user_role = auth_user[5]
+        if auth_user_role:
+            sale = sales_model.get_sales_by_sale_id(sale_id)
+
+            if not sale:
+                return make_response(jsonify({
+                    "status": "not found",
+                    "message": "sale you are looking for does not exist"
+                }), 404)
+
+            else:
+                return make_response(jsonify({
+                    "status": "ok",
+                    "sale": sale
+                }), 200)
+        else:
+            user_id = auth_user[0]
+            sale = sales_model.get_sales_by_sale_id(sale_id)
+            creator = sale[4]
+            if not sale:
+                return make_response(jsonify({
+                    "status": "not found",
+                    "message": "sale not found"
+                    }), 404)
+            elif sale and user_id != creator:
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "You are not authorised to view this sale"
+                    }), 401)
+            else:
+                return make_response(jsonify({
+                    "status": "ok",
+                    "sale": sale
+                    }), 200)
