@@ -237,6 +237,7 @@ class Test_Users(Store_Manager_Base):
         assert(logout.status_code == 200)
 
     def test_logout_without_logged_in(self):
+        logout= self.test_client.get('/api/v2/logout', content_type = 'application/json')
         assert(logout.status_code == 400)
 
 

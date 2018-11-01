@@ -19,13 +19,13 @@ class Categories(object):
                 "message": "User must be logged in"
             }), 401)
     
-        auth_user_role = auth_user[5]
+        auth_user_role = auth_user['is_admin']
         if not auth_user_role:
             return make_response(jsonify({
                 "status": "unauthorised",
                 "message": "You are not authorised to view this record!"
                 }), 401)
-                
+
         checks = categories_checker(request)
         if checks:
             return make_response(jsonify({
@@ -36,6 +36,8 @@ class Categories(object):
         data = request.get_json()
         name = data['name']
         description = data['description']
+        auth = auth_user['user_id']
+        name = name.lower()
         
         category = categories_model.get_by_name(name)
         if category:
@@ -44,7 +46,7 @@ class Categories(object):
                 "message": "category already exists"
                 }), 406)
         else:
-            category = categories_model.add_category(name, description)
+            category = categories_model.add_category(name, description, auth)
             categories = categories_model.get_all()
             return make_response(jsonify({
                 "status": "created",
@@ -52,7 +54,7 @@ class Categories(object):
                 "categories": categories
                 }), 201)
     
-    @categories_bp.route('/categories', methods=["POST"])
+    @categories_bp.route('/categories', methods=["GET"])
     @jwt_required
     def get_all_categories():
         categories = categories_model.get_all()
@@ -79,7 +81,7 @@ class Categories(object):
                     "message": "User must be logged in"
                 }), 401)
         
-            auth_user_role = auth_user[5]
+            auth_user_role = auth_user['is_admin']
             if not auth_user_role:
                 return make_response(jsonify({
                     "status": "unauthorised",
@@ -122,7 +124,7 @@ class Categories(object):
                     "message": "User must be logged in"
                 }), 401)
         
-            auth_user_role = auth_user[5]
+            auth_user_role = auth_user['is_admin']
             if not auth_user_role:
                 return make_response(jsonify({
                     "status": "unauthorised",
@@ -143,22 +145,6 @@ class Categories(object):
                     }), 404)
 
         else:
-            auth_user = get_jwt_identity()
-            if not auth_user:
-                return make_response(jsonify({
-                    "status": "unauthorised",
-                    "message": "User must be logged in"
-                }), 401)
-        
-            auth_user_role = auth_user[5]
-            if not auth_user_role:
-                return make_response(jsonify({
-                    "status": "unauthorised",
-                    "message": "Admin User must be logged in"
-                }), 401) 
-            
-            
-            
             category = categories_model.get_by_id(category_id)
             if category:
                 return make_response(

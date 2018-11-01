@@ -89,6 +89,28 @@ def registration_checker(request):
             email, re.IGNORECASE):
         return "Email Provided is not in email format"
        
+def update_checker(request):
+    '''
+    this function checks all the inputs for the registration part
+    '''
+    
+    if not request.is_json:
+        return "request not json"
+    
+    data = request.get_json()
+    name = data['name']
+    usrnm = data['username']
+    pswrd = data['password']
+    pswrd2 = data['password2']
+    
+    if name == "" or usrnm == "" or pswrd == "" or pswrd2 == "":
+        return "Please fill all the required fields"
+    
+    if not pswrd == pswrd2:
+        return "passwords don't match"
+     
+
+      
 
 def categories_checker(request):
     '''
@@ -100,7 +122,7 @@ def categories_checker(request):
     
     data = request.get_json()
     name = data['name']
-    description = data['email']
+    description = data['description']
      
     if name == "" or description =="":
         return "Please fill all the required fields"

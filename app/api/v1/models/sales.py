@@ -23,28 +23,28 @@ class SalesModel():
 
     def add_sale_items(self, sale_id, item_id, item_name, quantity, price, total, auth):
         query = """INSERT INTO sale_items(sale_id, item_id, item_name, quantity, price, total, created_by)\
-                VALUES(%d,%d,%s,%d,%d,%d);"""
+                VALUES(%s,%s,%s,%s,%s,%s,%s);"""
 
         cur.execute(query, (sale_id, item_id, item_name, quantity, price, total, auth))
         conn.commit()
 
-        query_confirm = """SELECT * FROM sale_items WHERE sale_id = %d;"""
-        cur.execute(query_confirm, (sale_id))
+        query_confirm = """SELECT * FROM sale_items WHERE sale_id = %s;"""
+        cur.execute(query_confirm, (sale_id, ))
         self.sale_items = cur.fetchall() 
 
         return self.sale_items
 
     def add_sales(self, payment_mode, items, grand, auth):
         query = """INSERT INTO sales(payment_mode, number_of_items, grand_total, created_by)\
-                VALUES(%d,%d,%s,%d,%d,%d);"""
+                VALUES(%s,%s,%s,%s);"""
 
         cur.execute(query, (payment_mode, items, grand, auth))
         conn.commit()
 
         sale_id = self.last_sale_id()
-
-        query_confirm = """SELECT * FROM sales WHERE sale_id = %d;"""
-        cur.execute(query_confirm, (sale_id))
+        
+        query_confirm = """SELECT * FROM sales WHERE sale_id = %s;"""
+        cur.execute(query_confirm, (sale_id, ))
         self.sale = cur.fetchone()
 
         return self.sale
@@ -52,8 +52,9 @@ class SalesModel():
     def last_sale_id(self):
         query = """SELECT sale_id FROM sales ORDER BY sale_id DESC LIMIT 1;"""
         cur.execute(query)
-        sale_id = cur.fetchall()
-        
+        sale_id = cur.fetchone()
+        sale_id = sale_id['sale_id']
+        print(sale_id)
         return sale_id
 
     def get_all_sales(self):
@@ -71,16 +72,16 @@ class SalesModel():
         return self.sale_items
         
     def get_sale_items_by_sale_id(self, sale_id):
-        query = """SELECT * FROM sale_items WHERE sale_id = %d;"""
-        cur.execute(query, ('sale_id'))
+        query = """SELECT * FROM sale_items WHERE sale_id = %s;"""
+        cur.execute(query, (sale_id, ))
         self.sale_items = cur.fetchall() 
 
         return self.sale_items
         
 
     def get_sales_by_sale_id(self, sale_id):
-        query = """SELECT * FROM sales WHERE sale_id = %d;"""
-        cur.execute(query, (sale_id))
+        query = """SELECT * FROM sales WHERE sale_id = %s;"""
+        cur.execute(query, (sale_id, ))
         self.sale = cur.fetchone() 
 
         return self.sale
@@ -89,8 +90,8 @@ class SalesModel():
         return sale_items
 
     def get_sales_by_user_id(self, user_id):
-        query = """SELECT * FROM sales WHERE created_by = %d;"""
-        cur.execute(query, (user_id))
+        query = """SELECT * FROM sales WHERE created_by = %s;"""
+        cur.execute(query, (user_id, ))
         self.sales = cur.fetchall() 
 
         return self.sales

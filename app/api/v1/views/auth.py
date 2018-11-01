@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify, make_response, session
-from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
+from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity, get_raw_jwt)
 import datetime
+from app import blacklist
 
 from ..models.auth import UserModel
-from ..utility.validators import json_checker, login_checker, registration_checker, system_error_login, system_error_registration
+from ..utility.validators import json_checker, login_checker, registration_checker, system_error_login, system_error_registration, update_checker
 
 users_bp = Blueprint('users', __name__, url_prefix='/api/v2')
 
@@ -12,6 +13,13 @@ user_model = UserModel()
 class Users(object):
     @users_bp.route("/login", methods=["POST"])
     def user_login():
+        user = get_jwt_identity()
+        if user:
+            return make_response(jsonify({
+                "status":"Forbidden",
+                "message":"You are already logged in"
+                }), 403)
+
         sys_checks = system_error_login(request)
         if sys_checks:
             return make_response(jsonify({
@@ -55,8 +63,8 @@ class Users(object):
     @users_bp.route("/register", methods=["POST"])
     @jwt_required
     def register():
-        user_email = get_jwt_identity()
-        print(user_email)
+        user = get_jwt_identity()
+        user_email = user['email']
         user = user_model.get_user_role_by_email(user_email)
         if not user:
             return make_response(jsonify({
@@ -99,10 +107,12 @@ class Users(object):
                 "users": users
                 }), 201)
 
-    @users_bp.route("/logout", methods=["GET"])
+    @users_bp.route("/logout", methods=["DELETE"])
     @jwt_required
     def logout():
-        pass
+        jti = get_raw_jwt()['jti']
+        blacklist.add(jti)
+        return jsonify({"msg": "Successfully logged out"}), 200
 
     @users_bp.route("/users", methods=["GET"])
     @jwt_required
@@ -114,7 +124,7 @@ class Users(object):
                 "message": "User must be logged in"
             }), 401)
     
-        auth_user_role = auth_user[5]
+        auth_user_role = auth_user['is_admin']
         if not auth_user_role:
             return make_response(jsonify({
                 "status": "unauthorised",
@@ -144,7 +154,7 @@ class Users(object):
                     "message": "User must be logged in"
                 }), 401)
         
-            auth_user_role = auth_user[5]
+            auth_user_role = auth_user['is_admin']
             if not auth_user_role:
                 id = user_model.get_user_id_by_email(auth_user[3])
                 if id != user_id:
@@ -153,7 +163,7 @@ class Users(object):
                         "message": "You are not authorised to view this record!"
                     }), 401)
             
-            checks = registration_checker(request)
+            checks = update_checker(request)
             if checks:
                 return make_response(jsonify({
                     "status":"not acceptable",
@@ -190,7 +200,7 @@ class Users(object):
                     "message": "User must be logged in"
                 }), 401)
         
-            auth_user_role = auth_user[5]
+            auth_user_role = auth_user['is_admin']
             if not auth_user_role:
                 return make_response(jsonify({
                     "status": "unauthorised",
@@ -198,6 +208,7 @@ class Users(object):
                 }), 401) 
 
             users = user_model.delete_user(user_id)
+            print(user_id)
             if users:
                 return make_response(
                     jsonify({
@@ -211,14 +222,14 @@ class Users(object):
                     }), 404)
 
         else:
-            auth_user_email = get_jwt_identity()
-            if not auth_user_email:
+            auth_user = get_jwt_identity()
+            if not auth_user:
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "User must be logged in"
                 }), 401)
         
-            auth_user_role = auth_user[5]
+            auth_user_role = auth_user['is_admin']
             if not auth_user_role:
                 id = user_model.get_user_id_by_email(auth_user[3])
                 if id != user_id:
@@ -226,7 +237,6 @@ class Users(object):
                         "status": "unauthorised",
                         "message": "You are not authorised to view this record!"
                     }), 401)
-            
             
             
             user = user_model.get_user_by_id(user_id)

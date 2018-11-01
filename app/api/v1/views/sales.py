@@ -29,7 +29,7 @@ class Sales(object):
         data = request.get_json()
         payment_mode = data['payment_mode']
         ordered_items = data['sale_items']
-        auth = auth_user[0]
+        auth = auth_user['user_id']
 
         if payment_mode == "":
             return make_response(jsonify({
@@ -74,13 +74,13 @@ class Sales(object):
                 if not item:
                     return make_response(jsonify({
                         "status": "not found", 
-                        "message": "item" + item_id + "not found"
+                        "message": "item with item_id " + str(item_id) + " not found"
                         }), 404)
                                                 
                 
-                name = item[1]
-                price = item[2]
-                stock_level = item[3]
+                name = item['name']
+                price = item['price']
+                stock_level = item['quantity']
                         
                 if not stock_level:
                     return make_response(jsonify({
@@ -146,7 +146,7 @@ class Sales(object):
                 "message": "User must be logged in"
             }), 401)
     
-        auth_user_role = auth_user[5]
+        auth_user_role = auth_user['is_admin']
         if not auth_user_role:
             user_id = auth_user[0]
             sales = sales_model.get_sales_by_user_id(user_id)
@@ -182,7 +182,7 @@ class Sales(object):
                 "message": "User must be logged in"
             }), 401)
     
-        auth_user_role = auth_user[5]
+        auth_user_role = auth_user['is_admin']
         if auth_user_role:
             sale = sales_model.get_sales_by_sale_id(sale_id)
 
@@ -198,9 +198,9 @@ class Sales(object):
                     "sale": sale
                 }), 200)
         else:
-            user_id = auth_user[0]
+            user_id = auth_user['user_id']
             sale = sales_model.get_sales_by_sale_id(sale_id)
-            creator = sale[4]
+            creator = sale['created_by']
             if not sale:
                 return make_response(jsonify({
                     "status": "not found",

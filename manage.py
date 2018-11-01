@@ -12,11 +12,11 @@ class DatabaseSetup(object):
     def __init__(self, url):
         '''initialize connection and cursor'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
+        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
     def create_tables(self, url):
         '''creates tables by iterating through the list of queries'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
+        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         queries = self.tables()
         for query in queries:
             try:
@@ -27,7 +27,7 @@ class DatabaseSetup(object):
             except psycopg2.InterfaceError as exc:
                 print (exc)
                 self.conn = psycopg2.connect(url)
-                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
+                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         self.conn.commit()
         self.cur.close()
         self.conn.close()
@@ -35,7 +35,7 @@ class DatabaseSetup(object):
     def drop_tables(self, url):
         '''drop tables by iterating through the list of queries'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
+        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         queries = self.schema()
         for query in queries:
             try:
@@ -46,7 +46,7 @@ class DatabaseSetup(object):
             except psycopg2.InterfaceError as exc:
                 print (exc)
                 self.conn = psycopg2.connect(url)
-                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
+                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         self.conn.commit()
         self.cur.close()
         self.conn.close()
@@ -54,7 +54,7 @@ class DatabaseSetup(object):
     def create_default_admin_user(self, url):
         '''creates the base user who is an admin user'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
+        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         admin = self.check_users(url)
         if not admin:
             password = 'Adm1n234'
@@ -68,11 +68,11 @@ class DatabaseSetup(object):
                 print (error)
                 try:
                     self.cur.close()
-                    self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
+                    self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
                 except:
                     self.conn.close()
                     self.conn = psycopg2.connect(url)
-                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
+                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
             self.conn.commit()
             self.cur.close()
@@ -84,7 +84,7 @@ class DatabaseSetup(object):
     def check_users(self, url):
         '''checks if the admin user already exists'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
+        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         query = """SELECT * FROM users WHERE email LIKE 'test@adminmail.com';"""
         self.cur.execute(query)
         self.user = self.cur.fetchone()
@@ -108,7 +108,7 @@ class DatabaseSetup(object):
             category_id serial PRIMARY KEY,
             name varchar(20) NOT NULL,
             description varchar(100),
-            created_by integer NOT NULL REFERENCES users(user_id),
+            created_by integer NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
             date_created timestamp with time zone DEFAULT ('now'::text)::date NOT NULL)
             """
 
@@ -117,9 +117,9 @@ class DatabaseSetup(object):
             name varchar(20) NOT NULL,
             price integer NOT NULL,
             quantity integer NOT NULL,
-            category integer REFERENCES categories(category_id),
+            category integer REFERENCES categories(category_id) ON DELETE CASCADE,
             reorder_point integer NOT NULL,
-            created_by integer NOT NULL REFERENCES users(user_id),
+            created_by integer NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
             date_created timestamp with time zone DEFAULT ('now'::text)::date NOT NULL)
             """
         
@@ -128,19 +128,19 @@ class DatabaseSetup(object):
             payment_mode varchar(20) NOT NULL,
             number_of_items integer NOT NULL,
             grand_total integer NOT NULL,
-            created_by integer NOT NULL REFERENCES users(user_id),
+            created_by integer NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
             date_created timestamp with time zone DEFAULT ('now'::text)::date NOT NULL)
             """
 
         query5 = """CREATE TABLE IF NOT EXISTS sale_items (
             sale_item_id serial PRIMARY KEY NOT NULL,
-            sale_id integer NOT NULL REFERENCES sales(sale_id),
-            item_id integer NOT NULL REFERENCES items(item_id),
+            sale_id integer NOT NULL REFERENCES sales(sale_id) ON DELETE CASCADE,
+            item_id integer NOT NULL REFERENCES items(item_id) ON DELETE CASCADE,
             item_name varchar(20) NOT NULL,
             price integer NOT NULL,
             quantity integer NOT NULL,
             total integer NOT NULL,
-            created_by integer NOT NULL REFERENCES users(user_id),
+            created_by integer NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
             date_created timestamp with time zone DEFAULT ('now'::text)::date NOT NULL)
             """
         

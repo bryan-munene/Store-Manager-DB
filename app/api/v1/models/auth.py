@@ -34,8 +34,8 @@ class UserModel():
         return self.user
 
     def get_user_by_id(self, user_id):
-        query = """SELECT * FROM users WHERE user_id = %d;"""
-        cur.execute(query, (user_id))
+        query = """SELECT * FROM users WHERE user_id = %s;"""
+        cur.execute(query, (user_id, ))
         self.user = cur.fetchone()        
 
         return self.user
@@ -75,13 +75,13 @@ class UserModel():
     def update_user(self, user_id, name, usrnm, pswrd):
         query = """UPDATE users 
                   SET name = %s, username = %s, password = %s
-                  WHERE user_id = %d
+                  WHERE user_id = %s;
                 """
         cur.execute(query, (name, usrnm, pswrd, user_id))
         conn.commit()
 
-        query_confirm = """SELECT * FROM users WHERE user_id = %d;"""
-        cur.execute(query_confirm, (user_id))
+        query_confirm = """SELECT * FROM users WHERE user_id = %s;"""
+        cur.execute(query_confirm, (user_id, ))
         self.user = cur.fetchone()
             
         return self.user
@@ -89,36 +89,41 @@ class UserModel():
     def update_user_role(self, user_id, is_admin):
         query = """UPDATE users 
                   SET is_admin = %s
-                  WHERE user_id = %d
+                  WHERE user_id = %s
                 """
         cur.execute(query, (is_admin, user_id))
         conn.commit()
 
-        query_confirm = """SELECT * FROM users WHERE user_id = %d;"""
-        cur.execute(query_confirm, (user_id))
+        query_confirm = """SELECT * FROM users WHERE user_id = %s;"""
+        cur.execute(query_confirm, (user_id, ))
         self.user = cur.fetchone()
             
         return self.user
 
     def delete_user(self, user_id):
-        query = """DELETE FROM users WHERE user_id = %d;;"""
-        cur.execute(query, (user_id))
+        user = self.get_user_by_id(user_id)
+        print(user)
+        if user:
+            query = """DELETE FROM users WHERE user_id = %s;"""
+            cur.execute(query, (user_id, ))
+        else:
+            return False
 
-        query_confirm = """SELECT * FROM users WHERE user_id = %d;"""
-        cur.execute(query_confirm, (user_id))
-        self.user = cur.fetchone()
+        query_confirm = """SELECT * FROM users;"""
+        cur.execute(query_confirm, (user_id, ))
+        self.user = cur.fetchall()
             
         return self.user
 
     def access_token(self, email, password):
         self.password_output = self.get_user_password_by_email(email)
-        self.password = self.password_output[0]
+        self.password = self.password_output['password']
         self.user = self.get_user_by_email(email)
         credentials = self.check_credentials(self.password, password)
         if credentials:
             identity = self.user
             fresh=True
-            exp = datetime.timedelta(minutes=60)
+            exp = datetime.timedelta(minutes=900)
             token = create_access_token(identity, fresh, exp)
             return token
         return False
