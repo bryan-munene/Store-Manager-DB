@@ -118,7 +118,10 @@ class Users(object):
     def logout(*args, **kwargs):
         jti = get_raw_jwt()['jti']
         blacklist.add(jti)
-        return jsonify({"msg": "Successfully logged out"}), 200
+        return make_response(jsonify({
+            "status": "logged out",
+            "message": "User successfully logged out"
+            }), 200)
 
     @users_bp.route("/users", methods=["GET"])
     @jwt_required
