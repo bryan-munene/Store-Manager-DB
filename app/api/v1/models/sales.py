@@ -60,7 +60,7 @@ class SalesModel():
         cur.execute(query)
         sale_id = cur.fetchone()
         sale_id = sale_id['sale_id']
-        print(sale_id)
+        
         return sale_id
 
     def get_all_sales(self):

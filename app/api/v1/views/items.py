@@ -1,5 +1,9 @@
 from flask import Blueprint, request, jsonify, make_response, session
-from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
+from flask_jwt_extended import (
+    JWTManager,
+    jwt_required,
+    create_access_token,
+    get_jwt_identity)
 from ..models.items import ItemsModel
 from ..models.categories import CategoriesModel
 from ..utility.validators import system_error_items, items_checker, system_error_items_update, items_update_checker, update_stock_checker, system_error_update_stock
@@ -10,7 +14,6 @@ categories_model = CategoriesModel()
 items_bp = Blueprint('items', __name__, url_prefix='/api/v2')
 
 
-
 @items_bp.route("/")
 def index():
     return jsonify(200, "WELCOME. You are here.")
@@ -19,7 +22,7 @@ def index():
 class Items(object):
     def __init__(self=None, *args, **kwargs):
         self.request = request
-        
+
     @items_bp.route('/add_item', methods=["POST"])
     @jwt_required
     def add_items(*args, **kwargs):
@@ -29,7 +32,7 @@ class Items(object):
                 "status": "unauthorised",
                 "message": "User must be logged in"
             }), 401)
-    
+
         auth_user_role = auth_user['is_admin']
         if auth_user_role == 'false':
             return make_response(jsonify({
@@ -40,15 +43,15 @@ class Items(object):
         sys_checks = system_error_items(request)
         if sys_checks:
             return make_response(jsonify({
-                "status":"server error",
-                "message":"we encountered a system error try again"
-                }), 500)
+                "status": "server error",
+                "message": "we encountered a system error try again"
+            }), 500)
         checks = items_checker(request)
         if checks:
             return make_response(jsonify({
-                "status":"not acceptable",
-                "message":checks
-                }), 406)
+                "status": "not acceptable",
+                "message": checks
+            }), 406)
 
         data = request.get_json()
         name = data['name']
@@ -58,14 +61,14 @@ class Items(object):
         reorder_point = data['reorder_point']
         category_id = data['category_id']
         auth = auth_user['user_id']
-        name =name.lower()
+        name = name.lower()
 
         category = categories_model.get_by_id(category_id)
         if not category:
             return make_response(jsonify({
                 "status": "not found",
                 "message": "category does not esxist"
-                }), 404)
+            }), 404)
 
         item = items_model.get_by_name_and_price(name, price)
         if item:
@@ -73,9 +76,16 @@ class Items(object):
                 jsonify({
                     "status": "forbidden",
                     "message": "item already exists"
-                    }), 403)
+                }), 403)
 
-        item = items_model.add_item(name, price, quantity, image, category_id, reorder_point, auth)
+        item = items_model.add_item(
+            name,
+            price,
+            quantity,
+            image,
+            category_id,
+            reorder_point,
+            auth)
         return make_response(
             jsonify({
                 "status": "created",
@@ -107,27 +117,27 @@ class Items(object):
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "User must be logged in"
-                    }), 401)
-        
+                }), 401)
+
             auth_user_role = auth_user['is_admin']
             if auth_user_role == 'false':
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "Admin User must be logged in"
-                    }), 401)
-            
+                }), 401)
+
             sys_checks = system_error_items_update(request)
             if sys_checks:
                 return make_response(jsonify({
-                    "status":"server error",
-                    "message":"we encountered a system error try again"
-                    }), 500)
+                    "status": "server error",
+                    "message": "we encountered a system error try again"
+                }), 500)
             checks = items_update_checker(request)
             if checks:
                 return make_response(jsonify({
-                    "status":"not acceptable",
-                    "message":checks
-                    }), 406)
+                    "status": "not acceptable",
+                    "message": checks
+                }), 406)
 
             data = request.get_json()
             price = data['price']
@@ -136,13 +146,13 @@ class Items(object):
             reorder_point = data['reorder_point']
             category_id = data['category_id']
             auth = auth_user['user_id']
-            
+
             category = categories_model.get_by_id(category_id)
             if not category:
                 return make_response(jsonify({
                     "status": "not found",
                     "message": "category does not esxist"
-                    }), 404)
+                }), 404)
 
             item = items_model.get_by_id(item_id)
             if not item:
@@ -150,30 +160,30 @@ class Items(object):
                     jsonify({
                         "status": "forbidden",
                         "message": "item does not exist"
-                        }), 403)
+                    }), 403)
 
             else:
-                item = items_model.update_item(item_id, price, quantity, image, category_id, reorder_point, auth)
+                item = items_model.update_item(
+                    item_id, price, quantity, image, category_id, reorder_point, auth)
                 return make_response(jsonify({
                     "status": "created",
                     "item": item
-                    }), 201)
-                            
-            
+                }), 201)
+
         elif request.method == 'DELETE':
             auth_user = get_jwt_identity()
             if not auth_user:
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "User must be logged in"
-                    }), 401)
-        
+                }), 401)
+
             auth_user_role = auth_user['is_admin']
             if auth_user_role == 'false':
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "Admin User must be logged in"
-                    }), 401) 
+                }), 401)
 
             items = items_model.delete_item(item_id)
             if items:
@@ -186,7 +196,7 @@ class Items(object):
                 return make_response(jsonify({
                     "status": "not found",
                     "message": "Items you are looking for do not esxist"
-                    }), 404)
+                }), 404)
 
         else:
             item = items_model.get_by_id(item_id)
@@ -200,8 +210,8 @@ class Items(object):
                 return make_response(jsonify({
                     "status": "not found",
                     "message": "Item you are looking for does not esxist"
-                    }), 404)
-                    
+                }), 404)
+
     @items_bp.route('/stock/<int:item_id>', methods=["PUT"])
     @jwt_required
     def item__stock(item_id):
@@ -210,38 +220,38 @@ class Items(object):
             return make_response(jsonify({
                 "status": "unauthorised",
                 "message": "User must be logged in"
-                }), 401)
-    
+            }), 401)
+
         auth_user_role = auth_user['is_admin']
         if auth_user_role == 'false':
             return make_response(jsonify({
                 "status": "unauthorised",
                 "message": "Admin User must be logged in"
-                }), 401)
+            }), 401)
 
         sys_checks = system_error_update_stock(request)
         if sys_checks:
             return make_response(jsonify({
-                "status":"server error",
-                "message":"we encountered a system error try again"
-                }), 500)
+                "status": "server error",
+                "message": "we encountered a system error try again"
+            }), 500)
         checks = update_stock_checker(request)
         if checks:
             return make_response(jsonify({
-                "status":"not acceptable",
-                "message":checks
-                }), 406)
-        
+                "status": "not acceptable",
+                "message": checks
+            }), 406)
+
         data = request.get_json()
         quantity = data['quantity']
-                
+
         item = items_model.get_by_id(item_id)
         if not item:
             return make_response(
                 jsonify({
                     "status": "forbidden",
                     "message": "item does not exist"
-                    }), 403)
+                }), 403)
 
         else:
             stock = item['quantity']
@@ -250,4 +260,4 @@ class Items(object):
             return make_response(jsonify({
                 "status": "Updated",
                 "item": item
-                }), 201)
+            }), 201)
