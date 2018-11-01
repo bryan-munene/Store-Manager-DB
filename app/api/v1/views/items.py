@@ -224,3 +224,62 @@ class Items(object):
                     "message": "Item you are looking for does not esxist"
                     }), 404)
                     
+    @items_bp.route('/stock/<int:item_id>', methods=["PUT"])
+    @jwt_required
+    def item__stock(item_id):
+        auth_user = get_jwt_identity()
+        if not auth_user:
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "User must be logged in"
+                }), 401)
+    
+        auth_user_role = auth_user['is_admin']
+        if auth_user_role == 'false':
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "Admin User must be logged in"
+                }), 401)
+        
+        if not request.is_json:
+            return make_response(
+                jsonify({
+                    "status": "wrong format",
+                    "messenge": "request not json"
+                }), 400)
+
+        data = request.get_json()
+        quantity = data['quantity']
+                
+        if quantity == "":
+            return make_response(jsonify({
+                "status": "not acceptable",
+                "message": "all fields must be filled"
+            }), 406)
+
+        if not quantity.isdigit():
+            return make_response(
+                jsonify({
+                    "status": "not acceptable",
+                    "message": "quantity not valid"
+                    }), 400)
+
+        
+        item = items_model.get_by_id(item_id)
+        if not item:
+            return make_response(
+                jsonify({
+                    "status": "forbidden",
+                    "message": "item does not exist"
+                    }), 403)
+
+        else:
+            stock = item['quantity']
+            new_stock = int(stock) + int(quantity)
+            item = items_model.update_item_quantity(item_id, new_stock)
+            items = items_model.get_all()
+            return make_response(jsonify({
+                "status": "Updated",
+                "item": item,
+                "items": items
+                }), 201)
