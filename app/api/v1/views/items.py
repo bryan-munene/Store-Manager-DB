@@ -27,11 +27,11 @@ class Items(object):
             }), 401)
     
         auth_user_role = auth_user['is_admin']
-        if not auth_user_role:
+        if auth_user_role == 'false':
             return make_response(jsonify({
                 "status": "unauthorised",
-                "message": "You are not authorised to view this record!"
-                }), 401)
+                "message": "Admin User must be logged in"
+            }), 401)
 
         if not request.is_json:
             return make_response(
@@ -119,13 +119,13 @@ class Items(object):
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "User must be logged in"
-                }), 401)
+                    }), 401)
         
             auth_user_role = auth_user['is_admin']
-            if not auth_user_role:
+            if auth_user_role == 'false':
                 return make_response(jsonify({
                     "status": "unauthorised",
-                    "message": "You are not authorised to view this record!"
+                    "message": "Admin User must be logged in"
                     }), 401)
             
             if not request.is_json:
@@ -154,7 +154,7 @@ class Items(object):
                     jsonify({
                         "status": "not acceptable",
                         "message": "price not valid"
-                    }), 400)
+                        }), 400)
 
             
             category = categories_model.get_by_id(category_id)
@@ -188,14 +188,14 @@ class Items(object):
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "User must be logged in"
-                }), 401)
+                    }), 401)
         
             auth_user_role = auth_user['is_admin']
-            if not auth_user_role:
+            if auth_user_role == 'false':
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "Admin User must be logged in"
-                }), 401) 
+                    }), 401) 
 
             items = items_model.delete_item(item_id)
             if items:

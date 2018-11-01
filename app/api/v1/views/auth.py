@@ -42,7 +42,7 @@ class Users(object):
             return make_response(jsonify({
                 "status": "not found",
                 "message": "User does not exist"
-            }), 404)
+                }), 404)
 
         credentials = user_model.access_token(email, password)
         username = user_model.get_user_username_by_email(email)
@@ -63,14 +63,20 @@ class Users(object):
     @users_bp.route("/register", methods=["POST"])
     @jwt_required
     def register():
-        user = get_jwt_identity()
-        user_email = user['email']
-        user = user_model.get_user_role_by_email(user_email)
-        if not user:
+        auth_user = get_jwt_identity()
+        if not auth_user:
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "User must be logged in"
+                }), 401)
+    
+        auth_user_role = auth_user['is_admin']
+        if auth_user_role == 'false':
             return make_response(jsonify({
                 "status": "unauthorised",
                 "message": "Admin User must be logged in"
                 }), 401)
+        
         sys_checks = system_error_registration(request)
         if sys_checks:
             return make_response(jsonify({
@@ -122,26 +128,26 @@ class Users(object):
             return make_response(jsonify({
                 "status": "unauthorised",
                 "message": "User must be logged in"
-            }), 401)
+                }), 401)
     
         auth_user_role = auth_user['is_admin']
-        if not auth_user_role:
+        if auth_user_role == 'false':
             return make_response(jsonify({
                 "status": "unauthorised",
                 "message": "Admin User must be logged in"
-            }), 401) 
+                }), 401) 
 
         users = user_model.get_all()
         if not users:
             return make_response(jsonify({
                 "status": "not found",
                 "message": "users you are looking for do not esxist"
-            }), 404)
+                }), 404)
         return make_response(
             jsonify({
                 "status": "ok",
                 "users": users
-            }), 200)
+                }), 200)
 
     @users_bp.route("/users/<int:user_id>", methods=["GET", "PUT", "DELETE"])
     @jwt_required
@@ -152,15 +158,13 @@ class Users(object):
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "User must be logged in"
-                }), 401)
+                    }), 401)
         
             auth_user_role = auth_user['is_admin']
-            if not auth_user_role:
-                id = user_model.get_user_id_by_email(auth_user[3])
-                if id != user_id:
-                    return make_response(jsonify({
-                        "status": "unauthorised",
-                        "message": "You are not authorised to view this record!"
+            if auth_user_role == 'false':
+                return make_response(jsonify({
+                    "status": "unauthorised",
+                    "message": "Admin User must be logged in"
                     }), 401)
             
             checks = update_checker(request)
@@ -198,14 +202,14 @@ class Users(object):
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "User must be logged in"
-                }), 401)
+                    }), 401)
         
             auth_user_role = auth_user['is_admin']
-            if not auth_user_role:
+            if auth_user_role == 'false':
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "Admin User must be logged in"
-                }), 401) 
+                    }), 401) 
 
             users = user_model.delete_user(user_id)
             print(user_id)
@@ -227,18 +231,18 @@ class Users(object):
                 return make_response(jsonify({
                     "status": "unauthorised",
                     "message": "User must be logged in"
-                }), 401)
+                    }), 401)
         
             auth_user_role = auth_user['is_admin']
-            if not auth_user_role:
-                id = user_model.get_user_id_by_email(auth_user[3])
+            if auth_user_role == 'false':
+                id = user_model.get_user_id_by_email(auth_user['email'])
                 if id != user_id:
                     return make_response(jsonify({
                         "status": "unauthorised",
                         "message": "You are not authorised to view this record!"
-                    }), 401)
+                        }), 401)
             
-            
+        
             user = user_model.get_user_by_id(user_id)
             if user:
                 return make_response(

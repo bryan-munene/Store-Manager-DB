@@ -18,6 +18,13 @@ class Sales(object):
                 "status": "unauthorised",
                 "message": "User must be logged in"
             }), 401)
+            
+        auth_user_role = auth_user['is_admin']
+        if auth_user_role == 'True':
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "Admin User cannot make a sale"
+                }), 401) 
 
         if not request.is_json:
             return make_response(
@@ -147,8 +154,8 @@ class Sales(object):
             }), 401)
     
         auth_user_role = auth_user['is_admin']
-        if not auth_user_role:
-            user_id = auth_user[0]
+        if auth_user_role == 'false':
+            user_id = auth_user['user_id']
             sales = sales_model.get_sales_by_user_id(user_id)
             if not sales:
                 return make_response(jsonify({
@@ -183,7 +190,7 @@ class Sales(object):
             }), 401)
     
         auth_user_role = auth_user['is_admin']
-        if auth_user_role:
+        if auth_user_role == 'True':
             sale = sales_model.get_sales_by_sale_id(sale_id)
 
             if not sale:
