@@ -13,7 +13,7 @@ def create_app(config):
 
     app.url_map.strict_slashes = False
     app.config.from_object(app_config[config])
-    app.config["TESTING"] = True
+    app.config["testing"] = True
     app.secret_key = os.getenv('SECRET_KEY')
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config["JWT_SECRET_KEY"]= os.getenv('SECRET_KEY')

@@ -122,7 +122,7 @@ class Test_Users(Store_Manager_Base):
     #LOGIN TESTS
 
     #INPUT CHECKS
-
+    
         
     def test_login_empty_email(self):
         login = self.test_client.post('/api/v2/login', data = sample_login[0], content_type = 'application/json')
