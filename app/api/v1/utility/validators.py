@@ -305,3 +305,17 @@ def system_error_update_stock(request):
         return e
     except NameError as e:
         return e
+
+def system_error_categories(request):
+    try:
+        data = request.get_json()
+        name = data['name']
+        description = data['description']
+    except TypeError as e:
+        return e
+    except KeyError as e:
+        return e
+    except NameError as e:
+        return e
+
+        

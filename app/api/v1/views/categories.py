@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, make_response, session
 from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from ..models.categories import CategoriesModel
-from ..utility.validators import categories_checker
+from ..utility.validators import categories_checker, system_error_categories
 
 categories_model = CategoriesModel()
 
@@ -29,6 +29,12 @@ class Categories(object):
                 "message": "Admin User must be logged in"
                 }), 401)
 
+        sys_checks = system_error_categories(request)
+        if sys_checks:
+            return make_response(jsonify({
+                "status":"server error",
+                "message":"we encountered a system error try again"
+                }), 500)
         checks = categories_checker(request)
         if checks:
             return make_response(jsonify({
@@ -50,11 +56,9 @@ class Categories(object):
                 }), 406)
         else:
             category = categories_model.add_category(name, description, auth)
-            categories = categories_model.get_all()
             return make_response(jsonify({
                 "status": "created",
-                "category": category,
-                "categories": categories
+                "category": category
                 }), 201)
     
     @categories_bp.route('/categories', methods=["GET"])
@@ -91,6 +95,12 @@ class Categories(object):
                     "message": "Admin User must be logged in"
                     }), 401)
             
+            sys_checks = system_error_categories(request)
+            if sys_checks:
+                return make_response(jsonify({
+                    "status":"server error",
+                    "message":"we encountered a system error try again"
+                    }), 500)
             checks = categories_checker(request)
             if checks:
                 return make_response(jsonify({
@@ -111,11 +121,9 @@ class Categories(object):
 
             else:
                 category = categories_model.update_category(category_id, name, description)
-                categories = categories_model.get_all()
                 return make_response(jsonify({
                     "status": "created",
-                    "category": category,
-                    "categories": categories
+                    "category": category
                     }), 201)
                             
             

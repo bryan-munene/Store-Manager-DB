@@ -76,12 +76,10 @@ class Items(object):
                     }), 403)
 
         item = items_model.add_item(name, price, quantity, image, category_id, reorder_point, auth)
-        items = items_model.get_all()
         return make_response(
             jsonify({
                 "status": "created",
-                "item": item,
-                "items": items
+                "item": item
             }), 201)
 
     @items_bp.route("/items", methods=["GET"])
@@ -156,11 +154,9 @@ class Items(object):
 
             else:
                 item = items_model.update_item(item_id, price, quantity, image, category_id, reorder_point, auth)
-                items = items_model.get_all()
                 return make_response(jsonify({
                     "status": "created",
-                    "item": item,
-                    "items": items
+                    "item": item
                     }), 201)
                             
             
@@ -251,9 +247,7 @@ class Items(object):
             stock = item['quantity']
             new_stock = int(stock) + int(quantity)
             item = items_model.update_item_quantity(item_id, new_stock)
-            items = items_model.get_all()
             return make_response(jsonify({
                 "status": "Updated",
-                "item": item,
-                "items": items
+                "item": item
                 }), 201)
