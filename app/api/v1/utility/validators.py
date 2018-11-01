@@ -109,7 +109,21 @@ def update_checker(request):
     if not pswrd == pswrd2:
         return "passwords don't match"
      
-
+def update_role_checker(request):
+    '''
+    this function checks all the inputs for the update user role part
+    '''
+    
+    if not request.is_json:
+        return "request not json"
+    
+    data = request.get_json()
+    role = data['is_admin']
+        
+    if role == "":
+        return "Please fill all the required fields"
+    
+    
       
 
 def categories_checker(request):

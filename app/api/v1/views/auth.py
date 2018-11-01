@@ -4,7 +4,7 @@ import datetime
 from app import blacklist
 
 from ..models.auth import UserModel
-from ..utility.validators import json_checker, login_checker, registration_checker, system_error_login, system_error_registration, update_checker
+from ..utility.validators import json_checker, login_checker, registration_checker, system_error_login, system_error_registration, update_checker, update_role_checker
 
 users_bp = Blueprint('users', __name__, url_prefix='/api/v2')
 
@@ -255,3 +255,49 @@ class Users(object):
                     "status": "not found",
                     "message": "users you are looking for do not esxist"
                     }), 404)
+
+
+    @users_bp.route("/role/<int:user_id>", methods=["PUT"])
+    @jwt_required
+    def user_role(user_id):
+        auth_user = get_jwt_identity()
+        if not auth_user:
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "User must be logged in"
+                }), 401)
+    
+        auth_user_role = auth_user['is_admin']
+        if auth_user_role == 'false':
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "Admin User must be logged in"
+                }), 401)
+        
+        checks = update_role_checker(request)
+        if checks:
+            return make_response(jsonify({
+                "status":"not acceptable",
+                "message":checks
+                }), 406)
+
+        data = request.get_json()
+        role = data['is_admin']
+        
+        user = user_model.get_user_by_id(user_id)
+        if not user:
+            return make_response(jsonify({
+                "status": "not acceptable",
+                "message": "user does not exist"
+                }), 406)
+
+        else:
+            user = user_model.update_user_role(user_id, role)
+            users = user_model.get_all()
+            return make_response(jsonify({
+                "status": "created",
+                "user": user,
+                "users": users
+                }), 201)
+                        
+        
