@@ -6,47 +6,53 @@ from werkzeug.security import generate_password_hash
 from instance.config import app_config
 
 
-
 class DatabaseSetup(object):
     '''Sets up db connection'''
+
     def __init__(self, url):
         '''initialize connection and cursor'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+        self.cur = self.conn.cursor(
+            cursor_factory=psycopg2.extras.RealDictCursor)
+
     def create_tables(self, url):
         '''creates tables by iterating through the list of queries'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+        self.cur = self.conn.cursor(
+            cursor_factory=psycopg2.extras.RealDictCursor)
         queries = self.tables()
         for query in queries:
             try:
                 self.cur.execute(query)
             except psycopg2.ProgrammingError as exc:
-                print (exc)
+                print(exc)
                 self.conn.rollback()
             except psycopg2.InterfaceError as exc:
-                print (exc)
+                print(exc)
                 self.conn = psycopg2.connect(url)
-                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+                self.cur = self.conn.cursor(
+                    cursor_factory=psycopg2.extras.RealDictCursor)
         self.conn.commit()
         self.cur.close()
         self.conn.close()
-        
+
     def drop_tables(self, url):
         '''drop tables by iterating through the list of queries'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+        self.cur = self.conn.cursor(
+            cursor_factory=psycopg2.extras.RealDictCursor)
         queries = self.schema()
         for query in queries:
             try:
                 self.cur.execute(query)
             except psycopg2.ProgrammingError as exc:
-                print (exc)
+                print(exc)
                 self.conn.rollback()
             except psycopg2.InterfaceError as exc:
-                print (exc)
+                print(exc)
                 self.conn = psycopg2.connect(url)
-                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+                self.cur = self.conn.cursor(
+                    cursor_factory=psycopg2.extras.RealDictCursor)
         self.conn.commit()
         self.cur.close()
         self.conn.close()
@@ -54,7 +60,8 @@ class DatabaseSetup(object):
     def create_default_admin_user(self, url):
         '''creates the base user who is an admin user'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+        self.cur = self.conn.cursor(
+            cursor_factory=psycopg2.extras.RealDictCursor)
         admin = self.check_users(url)
         if not admin:
             password = 'Adm1n234'
@@ -63,32 +70,40 @@ class DatabaseSetup(object):
                     VALUES(%s,%s,%s,%s,%s);"""
 
             try:
-                self.cur.execute(query, ('test', 'testeradmin', 'test@adminmail.com', password_hash, 'True'))
+                self.cur.execute(
+                    query,
+                    ('test',
+                     'testeradmin',
+                     'test@adminmail.com',
+                     password_hash,
+                     'True'))
             except(Exception, psycopg2.DatabaseError) as error:
-                print (error)
+                print(error)
                 try:
                     self.cur.close()
-                    self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-                except:
+                    self.cur = self.conn.cursor(
+                        cursor_factory=psycopg2.extras.RealDictCursor)
+                except BaseException:
                     self.conn.close()
                     self.conn = psycopg2.connect(url)
-                self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+                self.cur = self.conn.cursor(
+                    cursor_factory=psycopg2.extras.RealDictCursor)
 
             self.conn.commit()
             self.cur.close()
             self.conn.close()
         else:
             return False
-        
-        
+
     def check_users(self, url):
         '''checks if the admin user already exists'''
         self.conn = psycopg2.connect(url)
-        self.cur = self.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+        self.cur = self.conn.cursor(
+            cursor_factory=psycopg2.extras.RealDictCursor)
         query = """SELECT * FROM users WHERE email LIKE 'test@adminmail.com';"""
         self.cur.execute(query)
         self.user = self.cur.fetchone()
-        
+
         return self.user
 
     def tables(self):
@@ -123,7 +138,7 @@ class DatabaseSetup(object):
             created_by integer NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
             date_created timestamp with time zone DEFAULT ('now'::text)::date NOT NULL)
             """
-        
+
         query4 = """CREATE TABLE IF NOT EXISTS sales (
             sale_id serial PRIMARY KEY NOT NULL,
             payment_mode varchar(20) NOT NULL,
@@ -144,13 +159,13 @@ class DatabaseSetup(object):
             created_by integer NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
             date_created timestamp with time zone DEFAULT ('now'::text)::date NOT NULL)
             """
-        
+
         query6 = """CREATE TABLE IF NOT EXISTS blacklist_token (
             token_id serial PRIMARY KEY NOT NULL,
             token varchar(20) NOT NULL)
             """
 
-        queries = [query1, query2, query3, query4, query5, query6]  
+        queries = [query1, query2, query3, query4, query5, query6]
 
         return queries
 
@@ -163,6 +178,6 @@ class DatabaseSetup(object):
         query5 = """DROP TABLE IF EXISTS sale_items CASCADE;"""
         query6 = """DROP TABLE IF EXISTS blacklist_token CASCADE;"""
 
-        queries = [query1, query2, query3, query4, query5, query6]  
+        queries = [query1, query2, query3, query4, query5, query6]
 
         return queries
