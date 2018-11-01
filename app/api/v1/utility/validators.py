@@ -40,6 +40,9 @@ def json_checker(request):
 
 
 def system_error_login(request):
+    '''
+    this function checks all the inputs for the update user role part
+    '''
     try:
         data = request.get_json()
         email = data['email']
@@ -52,6 +55,9 @@ def system_error_login(request):
         return e
 
 def system_error_registration(request):
+    '''
+    this function checks all the inputs for the update user role part
+    '''
     try:
         data = request.get_json()
         name = data['name']
@@ -67,6 +73,9 @@ def system_error_registration(request):
         return e
 
 def system_error_update(request):
+    '''
+    this function checks all the inputs for the update user role part
+    '''
     try:
         data = request.get_json()
         name = data['name']
@@ -81,6 +90,9 @@ def system_error_update(request):
         return e
 
 def system_error_update_role(request):
+    '''
+    this function checks all the inputs for the update user role part
+    '''
     try:
         data = request.get_json()
         role = data['is_admin']
@@ -122,7 +134,6 @@ def update_checker(request):
     '''
     this function checks all the inputs for the registration part
     '''
-    
     if not request.is_json:
         return "request not json"
     
@@ -176,12 +187,8 @@ def items_checker(request):
     this function checks all the inputs for the items part
     '''
     if not request.is_json:
-        return make_response(
-            jsonify({
-            "status": "wrong format",
-            "messenge": "request not json"
-            }), 400)
-    
+        return "request not json"
+
     data = request.get_json()
     name = data['name']
     price = data['price']
@@ -190,27 +197,19 @@ def items_checker(request):
     
         
     if name == "" or price == "" or image == "" or quantity == "":
-        return make_response(jsonify({
-            "status": "not acceptable",
-            "message": "all fields must be filled"
-        }), 406)
+        return "all fields must be filled"
 
     if not price.isdigit():
-        return make_response(
-            jsonify({
-                "status": "not acceptable",
-                "message": "price not valid"
-            }), 400)
+        return "price not valid"
 
     if not name.isalpha():
-        return make_response(
-            jsonify({
-                "status": "not acceptable",
-                "message": "item name not valid"
-            }), 400)
+        return "item name not valid"
 
 
 def system_error_items(request):
+    '''
+    this function checks all the inputs for the update user role part
+    '''
     try:
         data = request.get_json()
         name = data['name']
@@ -231,11 +230,7 @@ def items_update_checker(request):
     this function checks all the inputs for the items part
     '''
     if not request.is_json:
-        return make_response(
-            jsonify({
-                "status": "wrong format",
-                "messenge": "request not json"
-            }), 400)
+        return "request not json"
 
     data = request.get_json()
     price = data['price']
@@ -243,20 +238,16 @@ def items_update_checker(request):
     quantity = data['quantity']
     
     if price == "" or image == "" or quantity == "":
-        return make_response(jsonify({
-            "status": "not acceptable",
-            "message": "all fields must be filled"
-        }), 406)
+        return "all fields must be filled"
 
     if not price.isdigit():
-        return make_response(
-            jsonify({
-                "status": "not acceptable",
-                "message": "price not valid"
-                }), 400)
+        return "price not valid"
 
 
 def system_error_items_update(request):
+    '''
+    this function checks all the inputs for the update user role part
+    '''
     try:
         data = request.get_json()
         price = data['price']
@@ -275,7 +266,6 @@ def update_stock_checker(request):
     '''
     this function checks all the inputs for the update user role part
     '''
-    
     if not request.is_json:
         return "request not json"
     
@@ -283,19 +273,15 @@ def update_stock_checker(request):
     quantity = data['quantity']
                 
     if quantity == "":
-        return make_response(jsonify({
-            "status": "not acceptable",
-            "message": "all fields must be filled"
-        }), 406)
+        return "all fields must be filled"
 
     if not quantity.isdigit():
-        return make_response(
-            jsonify({
-                "status": "not acceptable",
-                "message": "quantity not valid"
-                }), 400)
+        return "quantity not valid"
 
 def system_error_update_stock(request):
+    '''
+    this function checks all the inputs for the update user role part
+    '''
     try:
         data = request.get_json()
         quantity = data['quantity']
@@ -307,6 +293,9 @@ def system_error_update_stock(request):
         return e
 
 def system_error_categories(request):
+    '''
+    this function checks all the inputs for the update user role part
+    '''
     try:
         data = request.get_json()
         name = data['name']
@@ -318,4 +307,60 @@ def system_error_categories(request):
     except NameError as e:
         return e
 
-        
+def sales_checker(request): 
+    '''
+    this function checks all the inputs for the update user role part
+    '''
+    if not request.is_json:
+        return "request not json"
+
+    data = request.get_json()
+    payment_mode = data['payment_mode']
+    ordered_items = data['sale_items']
+   
+    if payment_mode == "":
+        return "Please fill all the required fields"
+
+
+    if not len(ordered_items) == 0:
+        for ordered_item in ordered_items:
+            item_id = ordered_item.get('item_id')
+            quantity = ordered_item.get('quantity')
+
+            
+            if quantity == "":
+                return "Please fill all the required fields"
+
+            if item_id == "":
+                return "Please fill all the required fields"
+
+            if not quantity.isdigit():
+                return "Quantity is not valid"
+
+            if not item_id.isdigit():
+                return "Item id is not valid"
+
+def system_error_sales(request):
+    '''
+    this function checks all the inputs for the update user role part
+    '''
+    try:
+        data = request.get_json()
+        payment_mode = data['payment_mode']
+        ordered_items = data['sale_items']
+    except TypeError as e:
+        return e
+    except KeyError as e:
+        return e
+    except NameError as e:
+        return e
+
+    try:
+        item_id = ordered_item.get('item_id')
+        quantity = ordered_item.get('quantity')
+    except TypeError as e:
+        return e
+    except KeyError as e:
+        return e
+    except NameError as e:
+        return e

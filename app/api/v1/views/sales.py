@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, make_response, session
 from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from ..models.sales import SalesModel
 from ..models.items import ItemsModel
+from ..utility.validators import system_error_sales, sales_checker
 
 sales_bp = Blueprint('sales', __name__, url_prefix='/api/v2')
 
@@ -29,54 +30,33 @@ class Sales(object):
                 "message": "Admin User cannot make a sale"
                 }), 401) 
 
-        if not request.is_json:
-            return make_response(
-                jsonify({
-                    "status": "wrong format",
-                    "message": "request not json"
-                }), 400)
-    
+        sys_checks = system_error_sales(request)
+        if sys_checks:
+            return make_response(jsonify({
+                "status":"server error",
+                "message":"we encountered a system error try again"
+                }), 500)
+        checks = sales_checker(request)
+        if checks:
+            return make_response(jsonify({
+                "status":"not acceptable",
+                "message":checks
+                }), 406)
+
+
         data = request.get_json()
         payment_mode = data['payment_mode']
         ordered_items = data['sale_items']
         auth = auth_user['user_id']
 
         if payment_mode == "":
-            return make_response(jsonify({
-                "status": "not acceptable",
-                "message": "Please fill all the required fields"
-            }), 406)
+            return "Please fill all the required fields"
 
-    
+
         if not len(ordered_items) == 0:
             for ordered_item in ordered_items:
                 item_id = ordered_item.get('item_id')
                 quantity = ordered_item.get('quantity')
-
-                
-                if quantity == "":
-                    return make_response(jsonify({
-                        "status": "not acceptable",
-                        "message": "Please fill all the required fields"
-                    }), 406)
-
-                if item_id == "":
-                    return make_response(jsonify({
-                        "status": "not acceptable",
-                        "message": "Please fill all the required fields"
-                    }), 406)
-
-                if not quantity.isdigit():
-                    return make_response(jsonify({
-                        "status": "not acceptable",
-                        "message": "Quantity is not valid"
-                    }), 400)
-
-                if not item_id.isdigit():
-                    return make_response(jsonify({
-                        "status": "not acceptable",
-                        "message": "Item id is not valid"
-                    }), 400)
 
                 item_id = int(item_id)
                 items_model = ItemsModel()
