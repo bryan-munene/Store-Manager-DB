@@ -9,9 +9,12 @@ sales_bp = Blueprint('sales', __name__, url_prefix='/api/v2')
 sales_model = SalesModel()
 
 class Sales(object):
+    def __init__(self=None, *args, **kwargs):
+        self.request = request
+        
     @sales_bp.route("/make_sale", methods=["POST"])
     @jwt_required
-    def make_sale():
+    def make_sale(*args, **kwargs):
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({
@@ -145,7 +148,7 @@ class Sales(object):
 
     @sales_bp.route("/sales", methods=["GET"])
     @jwt_required
-    def sales_all():
+    def sales_all(*args, **kwargs):
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({

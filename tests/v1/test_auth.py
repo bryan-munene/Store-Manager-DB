@@ -3,8 +3,9 @@ import unittest
 from flask import json
 
 from .setup_tests import Store_Manager_Base
-
+from .helpers_test import Helpers
 store_manager = Store_Manager_Base()
+helper = Helpers()
 
         
 #REGISTRATION INPUT FOR TESTS
@@ -172,52 +173,62 @@ class Test_Users(Store_Manager_Base):
     #USER INPUT CHECKS
     
     def test_register_empty_name(self):
-        register = self.test_client.post('/api/v2/register', data = sample_registration[0], content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        register = self.test_client.post('/api/v2/register', data = sample_registration[0], content_type = 'application/json', headers=dict(Authorization=self.token))
         assert(register.status_code == 400)
 
     def test_register_empty_email(self):
-        register = self.test_client.post('/api/v2/register', data = sample_registration[1], content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        register = self.test_client.post('/api/v2/register', data = sample_registration[1], content_type = 'application/json', headers=dict(Authorization=self.token))
         assert(register.status_code == 400)
 
     def test_register_empty_username(self):
-        register = self.test_client.post('/api/v2/register', data = sample_registration[2], content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        register = self.test_client.post('/api/v2/register', data = sample_registration[2], content_type = 'application/json', headers=dict(Authorization=self.token))
         assert(register.status_code == 400)
 
     def test_register_empty_password(self):
-        register = self.test_client.post('/api/v2/register', data = sample_registration[3], content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        register = self.test_client.post('/api/v2/register', data = sample_registration[3], content_type = 'application/json', headers=dict(Authorization=self.token))
         assert(register.status_code == 400)
 
     def test_register_empty_password2(self):
-        register = self.test_client.post('/api/v2/register', data = sample_registration[4], content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        register = self.test_client.post('/api/v2/register', data = sample_registration[4], content_type = 'application/json', headers=dict(Authorization=self.token))
         assert(register.status_code == 400)
 
 
     #EMAIL FORMAT CHECKS
 
     def test_register_wrong_email_format(self):
-        register = self.test_client.post('/api/v2/register', data = sample_registration[5], content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        register = self.test_client.post('/api/v2/register', data = sample_registration[5], content_type = 'application/json', headers=dict(Authorization=self.token))
         assert(register.status_code == 400)
 
     def test_register_wrong_email_format1(self):
-        register = self.test_client.post('/api/v2/register', data = sample_registration[6], content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        register = self.test_client.post('/api/v2/register', data = sample_registration[6], content_type = 'application/json', headers=dict(Authorization=self.token))
         assert(register.status_code == 400)
 
 
     #PASSWORD CHECK
 
     def test_register_passwords_matching(self):
-        register = self.test_client.post('/api/v2/register', data = sample_registration[7], content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        register = self.test_client.post('/api/v2/register', data = sample_registration[7], content_type = 'application/json', headers=dict(Authorization=self.token))
         assert(register.status_code == 400)
 
     def test_register_passwords_matching1(self):
-        register = self.test_client.post('/api/v2/register', data = sample_registration[8], content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        register = self.test_client.post('/api/v2/register', data = sample_registration[8], content_type = 'application/json', headers=dict(Authorization=self.token))
         assert(register.status_code == 400)
 
 
     #CORRECT INPUT
 
     def test_register_correct_data(self):
-        register = self.test_client.post('/api/v2/register', data = json.dumps(sample_registration[9]), content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        register = self.test_client.post('/api/v2/register', data = json.dumps(sample_registration[9]), content_type = 'application/json', headers=dict(Authorization=self.token))
         json.loads(register.data.decode('utf-8'))
         assert (register.status_code == 201)
 
@@ -225,7 +236,8 @@ class Test_Users(Store_Manager_Base):
     #DUPLICATE INPUT
 
     def test_register_duplicate_input(self):
-        register = self.test_client.post('/api/v2/register', data = sample_registration[9], content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        register = self.test_client.post('/api/v2/register', data = sample_registration[9], content_type = 'application/json', headers=dict(Authorization=self.token))
         assert (register.status_code == 400)
 
     '''-------------------------------------------------------------------------------------------------------------------------------'''
@@ -233,11 +245,12 @@ class Test_Users(Store_Manager_Base):
     #LOGOUT TESTS
 
     def test_logout_correctly(self):
-        logout= self.test_client.get('/api/v2/logout', content_type = 'application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        logout= self.test_client.delete('/api/v2/logout', content_type = 'application/json', headers=dict(Authorization=self.token))
         assert(logout.status_code == 200)
 
     def test_logout_without_logged_in(self):
-        logout= self.test_client.get('/api/v2/logout', content_type = 'application/json')
+        logout= self.test_client.delete('/api/v2/logout', content_type = 'application/json')
         assert(logout.status_code == 400)
 
 
@@ -252,7 +265,8 @@ class Test_Users(Store_Manager_Base):
 
 
     def test_users_retrive_all_successfully(self):
-        get= self.test_client.get('/api/v2/users',content_type='application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        get= self.test_client.get('/api/v2/users',content_type='application/json', headers=dict(Authorization=self.token))
         assert(get.status_code==200)
 
 
@@ -266,15 +280,18 @@ class Test_Users(Store_Manager_Base):
         assert(get.status_code==401)
 
     def test_users_retrive_user_not_created(self):
-        get= self.test_client.get('/api/v2/users/100',content_type='application/json',headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        get= self.test_client.get('/api/v2/users/100',content_type='application/json', headers=dict(Authorization=self.token))
         assert(get.status_code==404)
 
     def test_users_retrive_user_negative_id(self):
-        get= self.test_client.get('/api/v2/users/-1',content_type='application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        get= self.test_client.get('/api/v2/users/-1',content_type='application/json', headers=dict(Authorization=self.token))
         assert(get.status_code==404)
 
     def test_users_retrive_user_successfully(self):
-        get= self.test_client.get('/api/v2/users/1',content_type='application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        get= self.test_client.get('/api/v2/users/1',content_type='application/json', headers=dict(Authorization=self.token))
         assert(get.status_code==200)
 
     '''-------------------------------------------------------------------------------------------------------------------------------'''
@@ -287,15 +304,18 @@ class Test_Users(Store_Manager_Base):
         assert(update.status_code==401)
 
     def test_users_update_user_not_created(self):
-        update= self.test_client.put('/api/v2/users/100',content_type='application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        update= self.test_client.put('/api/v2/users/100',content_type='application/json', headers=dict(Authorization=self.token))
         assert(update.status_code==404)
 
     def test_users_update_user_negative_id(self):
-        update= self.test_client.put('/api/v2/users/-1',content_type='application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        update= self.test_client.put('/api/v2/users/-1',content_type='application/json', headers=dict(Authorization=self.token))
         assert(update.status_code==404)
 
     def test_users_update_user_successfully(self):
-        update= self.test_client.put('/api/v2/users/1',content_type='application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        update= self.test_client.put('/api/v2/users/1',content_type='application/json', headers=dict(Authorization=self.token))
         assert(update.status_code==200)
 
     '''-------------------------------------------------------------------------------------------------------------------------------'''
@@ -308,13 +328,16 @@ class Test_Users(Store_Manager_Base):
         assert(delete.status_code==401)
 
     def test_users_delete_user_not_created(self):
-        delete= self.test_client.delete('/api/v2/users/100',content_type='application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        delete= self.test_client.delete('/api/v2/users/100',content_type='application/json', headers=dict(Authorization=self.token))
         assert(delete.status_code==404)
 
     def test_users_delete_user_negative_id(self):
-        delete= self.test_client.delete('/api/v2/users/-1',content_type='application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        delete= self.test_client.delete('/api/v2/users/-1',content_type='application/json', headers=dict(Authorization=self.token))
         assert(delete.status_code==404)
 
     def test_users_delete_user_successfully(self):
-        delete= self.test_client.delete('/api/v2/users/1',content_type='application/json', headers= self.token)
+        self.token = store_manager.sign_in_admin()
+        delete= self.test_client.delete('/api/v2/users/1',content_type='application/json', headers=dict(Authorization=self.token))
         assert(delete.status_code==200)

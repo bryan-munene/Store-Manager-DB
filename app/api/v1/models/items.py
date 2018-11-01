@@ -1,6 +1,13 @@
 from .db_conn import conn, cur
 
 class ItemsModel():
+    def __init__(self, name=None, price=None, quantity=None, category_id=None, reorder_point=None, auth=None):
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+        self.category_id = category_id
+        self.reorder_point = reorder_point
+        self.auth = auth
     
     def add_item(self, name, price, quantity, category_id, reorder_point, auth):
         query = """INSERT INTO items(name, price, quantity, category, reorder_point, created_by)\

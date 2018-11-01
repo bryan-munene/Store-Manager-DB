@@ -9,9 +9,12 @@ categories_bp = Blueprint('categories', __name__, url_prefix='/api/v2')
 
 
 class Categories(object):
+    def __init__(self=None, *args, **kwargs):
+        self.request = request
+        
     @categories_bp.route('/add_category', methods=["POST"])
     @jwt_required
-    def add_categories():
+    def add_categories(*args, **kwargs):
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({
@@ -56,7 +59,7 @@ class Categories(object):
     
     @categories_bp.route('/categories', methods=["GET"])
     @jwt_required
-    def get_all_categories():
+    def get_all_categories(*args, **kwargs):
         categories = categories_model.get_all()
         if not categories:
             return make_response(jsonify({

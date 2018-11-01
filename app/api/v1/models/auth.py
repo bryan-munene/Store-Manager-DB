@@ -5,7 +5,14 @@ from .db_conn import conn, cur
 
 
 class UserModel():
-    
+    def __init__(self, name=None, email=None, usrnm=None, pswrd=None, is_admin=None, user_id=None):
+        self.name = name
+        self.email = email
+        self.username = usrnm
+        self.pswrd = pswrd
+        self.is_admin = is_admin
+        self.user_id = user_id
+
     def add_user(self, name, email, usrnm, pswrd, is_admin):
         self.password = generate_password_hash(pswrd, method='sha256')
         query = """INSERT INTO users(name, username, email, password, is_admin)\
@@ -73,11 +80,12 @@ class UserModel():
         return self.users
 
     def update_user(self, user_id, name, usrnm, pswrd):
+        self.password = generate_password_hash(pswrd, method='sha256')
         query = """UPDATE users 
                   SET name = %s, username = %s, password = %s
                   WHERE user_id = %s;
                 """
-        cur.execute(query, (name, usrnm, pswrd, user_id))
+        cur.execute(query, (name, usrnm, self.password, user_id))
         conn.commit()
 
         query_confirm = """SELECT * FROM users WHERE user_id = %s;"""

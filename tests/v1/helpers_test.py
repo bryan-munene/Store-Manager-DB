@@ -1,10 +1,10 @@
+import pytest
 import unittest
-import os
 from flask import json
-from app import create_app
-from manage import DatabaseSetup
+from .setup_tests import Store_Manager_Base
 
-url = os.getenv('DATABASE_URL_TEST')
+store_manager = Store_Manager_Base()
+
 
 
 sample_user=[
@@ -48,27 +48,9 @@ sample_sale = [{
 ]
 
 
-class Store_Manager_Base(unittest.TestCase):
-    '''This class configures all the parameters needed for the tests and is inheritted by all other test classes.'''
-    def setUp(self):
-        '''This method sets up the necessary parameters such as the test client, test db and testing setting in the app'''
-        self.app = create_app('testing')
-        self.db = DatabaseSetup(url)
-        self.test_client = self.app.test_client()
-        self.app_context = self.app.app_context()
-        self.db.create_tables(url)
-        self.db.create_default_admin_user(url)
-        self.app.testing = True
 
-        with self.app_context:
-            self.app_context.push()
-            
-    def tearDown(self):
-        '''This method clears all the data and records from the tests ran. It is ran at the end of the tests.'''
-        with self.app_context:
-            self.app_context.pop()
-        self.db.drop_tables(url)
-
+class Helpers(Store_Manager_Base):
+    '''This class holds helper methods for tests'''    
     def sign_up_user(self):
         '''
         this is a helper function for an ordinary user's registration

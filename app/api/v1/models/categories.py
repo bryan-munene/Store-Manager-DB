@@ -1,6 +1,11 @@
 from .db_conn import conn, cur
 
 class CategoriesModel():
+    def __init__(self, name=None, description=None, auth=None, category_id=None):
+        self.name = name
+        self.description = description
+        self.auth = auth
+        self.category_id = category_id
     
     def add_category(self, name, description, auth):
         query = """INSERT INTO categories(name, description, created_by)\

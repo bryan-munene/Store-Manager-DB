@@ -11,8 +11,11 @@ users_bp = Blueprint('users', __name__, url_prefix='/api/v2')
 user_model = UserModel()
 
 class Users(object):
+    def __init__(self=None, *args, **kwargs):
+        self.request = request
+
     @users_bp.route("/login", methods=["POST"])
-    def user_login():
+    def user_login(*args, **kwargs):
         user = get_jwt_identity()
         if user:
             return make_response(jsonify({
@@ -53,16 +56,15 @@ class Users(object):
                 "login": True,
                 "token": credentials
                 }), 200)
-
-        else:
-            return make_response(jsonify({
-                "status": "login error",
-                "login": False
-                }), 401)
+        return make_response(jsonify({
+            "status": "login error",
+            "message": "Credentials do not match",
+            "login": False
+            }), 401)
 
     @users_bp.route("/register", methods=["POST"])
     @jwt_required
-    def register():
+    def register(*args, **kwargs):
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({
@@ -115,14 +117,14 @@ class Users(object):
 
     @users_bp.route("/logout", methods=["DELETE"])
     @jwt_required
-    def logout():
+    def logout(*args, **kwargs):
         jti = get_raw_jwt()['jti']
         blacklist.add(jti)
         return jsonify({"msg": "Successfully logged out"}), 200
 
     @users_bp.route("/users", methods=["GET"])
     @jwt_required
-    def users_all():
+    def users_all(*args, **kwargs):
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({

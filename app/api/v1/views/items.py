@@ -16,9 +16,12 @@ def index():
 
 
 class Items(object):
+    def __init__(self=None, *args, **kwargs):
+        self.request = request
+        
     @items_bp.route('/add_item', methods=["POST"])
     @jwt_required
-    def add_items():
+    def add_items(*args, **kwargs):
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({
@@ -96,7 +99,7 @@ class Items(object):
 
     @items_bp.route("/items", methods=["GET"])
     @jwt_required
-    def items_all():
+    def items_all(*args, **kwargs):
         items = items_model.get_all()
         if not items:
             return make_response(jsonify({

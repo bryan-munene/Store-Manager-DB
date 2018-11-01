@@ -2,11 +2,17 @@ from .db_conn import conn, cur
 sale_items = []
         
 class SalesModel():
+    def __init__(self, item_id=None, name=None, quantity=None, price=None, total=None, auth=None, user_id=None):
+        self.item_id = item_id
+        self.name = name
+        self.quantity = quantity
+        self.price = price
+        self.total = total
+        self.auth = auth
+        self.user_id = user_id
     
     def add_sale_items_list(self, item_id, name, quantity, price, total, auth):
         self.sale_item_id = len(sale_items)+1
-        
-        
         sale_item = {
             "sale_item_id": self.sale_item_id,
             "item_id": item_id,
