@@ -171,3 +171,57 @@ def categories_checker(request):
         return "Please fill all the required fields"
     
     
+def items_checker(request):
+    '''
+    this function checks all the inputs for the items part
+    '''
+    if not request.is_json:
+        return make_response(
+            jsonify({
+            "status": "wrong format",
+            "messenge": "request not json"
+            }), 400)
+    
+    data = request.get_json()
+    name = data['name']
+    price = data['price']
+    image = data['image']
+    quantity = data['quantity']
+    
+        
+    if name == "" or price == "" or image == "" or quantity == "":
+        return make_response(jsonify({
+            "status": "not acceptable",
+            "message": "all fields must be filled"
+        }), 406)
+
+    if not price.isdigit():
+        return make_response(
+            jsonify({
+                "status": "not acceptable",
+                "message": "price not valid"
+            }), 400)
+
+    if not name.isalpha():
+        return make_response(
+            jsonify({
+                "status": "not acceptable",
+                "message": "item name not valid"
+            }), 400)
+
+
+def system_error_items(request):
+    try:
+        data = request.get_json()
+        name = data['name']
+        price = data['price']
+        image = data['image']
+        quantity = data['quantity']
+        reorder_point = data['reorder_point']
+        category_id = data['category_id']
+    except TypeError as e:
+        return e
+    except KeyError as e:
+        return e
+    except NameError as e:
+        return e

@@ -21,27 +21,27 @@ class UserModel():
         cur.execute(query, (name, usrnm, email, self.password, is_admin))
         conn.commit()
 
-        query_confirm = """SELECT * FROM users WHERE email = %s;"""
+        query_confirm = """SELECT name, username, email, is_admin FROM users WHERE email = %s;"""
         cur.execute(query_confirm, (email, ))
         self.user = cur.fetchone()        
 
         return self.user
 
     def get_all(self):
-        query = """SELECT * FROM users;"""
+        query = """SELECT name, username, email, is_admin FROM users;"""
         cur.execute(query)
         self.users = cur.fetchall()
         return self.users
 
     def get_user_by_email(self, email):
-        query = """SELECT * FROM users WHERE email = %s;"""
+        query = """SELECT name, username, email, is_admin FROM users WHERE email = %s;"""
         cur.execute(query, (email, ))
         self.user = cur.fetchone()        
 
         return self.user
 
     def get_user_by_id(self, user_id):
-        query = """SELECT * FROM users WHERE user_id = %s;"""
+        query = """SELECT name, username, email, is_admin FROM users WHERE user_id = %s;"""
         cur.execute(query, (user_id, ))
         self.user = cur.fetchone()        
 
@@ -88,7 +88,7 @@ class UserModel():
         cur.execute(query, (name, usrnm, self.password, user_id))
         conn.commit()
 
-        query_confirm = """SELECT * FROM users WHERE user_id = %s;"""
+        query_confirm = """SELECT name, username, email, is_admin FROM users WHERE user_id = %s;"""
         cur.execute(query_confirm, (user_id, ))
         self.user = cur.fetchone()
             
@@ -102,7 +102,7 @@ class UserModel():
         cur.execute(query, (is_admin, user_id))
         conn.commit()
 
-        query_confirm = """SELECT * FROM users WHERE user_id = %s;"""
+        query_confirm = """SELECT name, username, email, is_admin FROM users WHERE user_id = %s;"""
         cur.execute(query_confirm, (user_id, ))
         self.user = cur.fetchone()
             
@@ -117,7 +117,7 @@ class UserModel():
         else:
             return False
 
-        query_confirm = """SELECT * FROM users;"""
+        query_confirm = """SELECT name, username, email, is_admin FROM users;"""
         cur.execute(query_confirm, (user_id, ))
         self.user = cur.fetchall()
             

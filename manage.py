@@ -117,6 +117,7 @@ class DatabaseSetup(object):
             name varchar(20) NOT NULL,
             price integer NOT NULL,
             quantity integer NOT NULL,
+            image varchar(200) NOT NULL,
             category integer REFERENCES categories(category_id) ON DELETE CASCADE,
             reorder_point integer NOT NULL,
             created_by integer NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,

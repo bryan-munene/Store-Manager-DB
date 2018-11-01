@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, make_response, session
 from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from ..models.items import ItemsModel
 from ..models.categories import CategoriesModel
+from ..utility.validators import system_error_items, items_checker
 
 items_model = ItemsModel()
 categories_model = CategoriesModel()
@@ -36,13 +37,19 @@ class Items(object):
                 "message": "Admin User must be logged in"
             }), 401)
 
-        if not request.is_json:
-            return make_response(
-                jsonify({
-                    "status": "wrong format",
-                    "messenge": "request not json"
-                }), 400)
-    
+        sys_checks = system_error_items(request)
+        if sys_checks:
+            return make_response(jsonify({
+                "status":"server error",
+                "message":"we encountered a system error try again"
+                }), 500)
+        checks = items_checker(request)
+        if checks:
+            return make_response(jsonify({
+                "status":"not acceptable",
+                "message":checks
+                }), 406)
+
         data = request.get_json()
         name = data['name']
         price = data['price']
@@ -52,26 +59,6 @@ class Items(object):
         category_id = data['category_id']
         auth = auth_user['user_id']
         name =name.lower()
-        
-        if name == "" or price == "" or image == "" or quantity == "":
-            return make_response(jsonify({
-                "status": "not acceptable",
-                "message": "all fields must be filled"
-            }), 406)
-
-        if not price.isdigit():
-            return make_response(
-                jsonify({
-                    "status": "not acceptable",
-                    "message": "price not valid"
-                }), 400)
-
-        if not name.isalpha():
-            return make_response(
-                jsonify({
-                    "status": "not acceptable",
-                    "message": "item name not valid"
-                }), 400)
 
         category = categories_model.get_by_id(category_id)
         if not category:
@@ -88,7 +75,7 @@ class Items(object):
                     "message": "item already exists"
                     }), 403)
 
-        item = items_model.add_item(name, price, quantity, category_id, reorder_point, auth)
+        item = items_model.add_item(name, price, quantity, image, category_id, reorder_point, auth)
         items = items_model.get_all()
         return make_response(
             jsonify({

@@ -9,11 +9,11 @@ class ItemsModel():
         self.reorder_point = reorder_point
         self.auth = auth
     
-    def add_item(self, name, price, quantity, category_id, reorder_point, auth):
-        query = """INSERT INTO items(name, price, quantity, category, reorder_point, created_by)\
+    def add_item(self, name, price, quantity, image, category_id, reorder_point, auth):
+        query = """INSERT INTO items(name, price, quantity, image, category, reorder_point, created_by)\
                 VALUES(%s,%s,%s,%s,%s,%s);"""
         print(query)
-        cur.execute(query, (name, price, quantity, category_id, reorder_point, auth))
+        cur.execute(query, (name, price, quantity, image, category_id, reorder_point, auth))
         conn.commit()
 
         query_confirm = """SELECT * FROM items WHERE name = %s AND price = %s;"""

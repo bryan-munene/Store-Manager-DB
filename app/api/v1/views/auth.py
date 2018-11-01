@@ -108,11 +108,9 @@ class Users(object):
 
         else:
             user = user_model.add_user(name, email, usrnm, pswrd, is_admin)
-            users = user_model.get_all()
             return make_response(jsonify({
                 "status": "created",
-                "user": user,
-                "users": users
+                "user": user
                 }), 201)
 
     @users_bp.route("/logout", methods=["DELETE"])
@@ -196,11 +194,9 @@ class Users(object):
 
             else:
                 user = user_model.update_user(user_id, name, usrnm, pswrd)
-                users = user_model.get_all()
                 return make_response(jsonify({
                     "status": "created",
-                    "user": user,
-                    "users": users
+                    "user": user
                     }), 201)
                             
             
@@ -220,7 +216,6 @@ class Users(object):
                     }), 401) 
 
             users = user_model.delete_user(user_id)
-            print(user_id)
             if users:
                 return make_response(
                     jsonify({
@@ -256,7 +251,7 @@ class Users(object):
                 return make_response(
                     jsonify({
                         "status": "ok",
-                        "users": user
+                        "user": user
                     }), 200)
             else:
                 return make_response(jsonify({
@@ -310,8 +305,7 @@ class Users(object):
             users = user_model.get_all()
             return make_response(jsonify({
                 "status": "created",
-                "user": user,
-                "users": users
+                "user": user
                 }), 201)
                         
         
