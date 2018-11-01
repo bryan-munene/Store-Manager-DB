@@ -4,7 +4,7 @@ import datetime
 from app import blacklist
 
 from ..models.auth import UserModel
-from ..utility.validators import json_checker, login_checker, registration_checker, system_error_login, system_error_registration, update_checker, update_role_checker
+from ..utility.validators import json_checker, login_checker, registration_checker, system_error_login, system_error_registration, update_checker, update_role_checker, system_error_update,system_error_update_role
 
 users_bp = Blueprint('users', __name__, url_prefix='/api/v2')
 
@@ -26,8 +26,8 @@ class Users(object):
         sys_checks = system_error_login(request)
         if sys_checks:
             return make_response(jsonify({
-                "status":"we encountered a system error try again",
-                "message":sys_checks
+                "status":"Server error",
+                "message":"we encountered a system error try again"
                 }), 500)
         checks = login_checker(request)
         if checks:
@@ -82,8 +82,8 @@ class Users(object):
         sys_checks = system_error_registration(request)
         if sys_checks:
             return make_response(jsonify({
-                "status":"we encountered a system error try again",
-                "message":sys_checks
+                "status":"server error",
+                "message":"we encountered a system error try again"
                 }), 500)
         checks = registration_checker(request)
         if checks:
@@ -169,6 +169,12 @@ class Users(object):
                     "message": "Admin User must be logged in"
                     }), 401)
             
+            sys_checks = system_error_update(request)
+            if sys_checks:
+                return make_response(jsonify({
+                    "status":"server error",
+                    "message":"we encountered a system error try again"
+                    }), 500)
             checks = update_checker(request)
             if checks:
                 return make_response(jsonify({
@@ -275,7 +281,13 @@ class Users(object):
                 "status": "unauthorised",
                 "message": "Admin User must be logged in"
                 }), 401)
-        
+
+        sys_checks = system_error_update_role(request)
+        if sys_checks:
+            return make_response(jsonify({
+                "status":"server error",
+                "message":"we encountered a system error try again"
+                }), 500)
         checks = update_role_checker(request)
         if checks:
             return make_response(jsonify({

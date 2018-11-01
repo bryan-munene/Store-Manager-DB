@@ -44,6 +44,8 @@ def system_error_login(request):
         data = request.get_json()
         email = data['email']
         password = data['password']
+    except TypeError as e:
+        return e
     except KeyError as e:
         return e
     except NameError as e:
@@ -57,6 +59,33 @@ def system_error_registration(request):
         usrnm = data['username']
         pswrd = data['password']
         pswrd2 = data['password2']
+    except TypeError as e:
+        return e
+    except KeyError as e:
+        return e
+    except NameError as e:
+        return e
+
+def system_error_update(request):
+    try:
+        data = request.get_json()
+        name = data['name']
+        usrnm = data['username']
+        pswrd = data['password']
+        pswrd2 = data['password2']
+    except TypeError as e:
+        return e
+    except KeyError as e:
+        return e
+    except NameError as e:
+        return e
+
+def system_error_update_role(request):
+    try:
+        data = request.get_json()
+        role = data['is_admin']
+    except TypeError as e:
+        return e
     except KeyError as e:
         return e
     except NameError as e:
