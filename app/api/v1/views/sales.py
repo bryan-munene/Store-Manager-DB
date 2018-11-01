@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response, session
 from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
-from ..models.sales import SalesModel
+from ..models.sales import SalesModel, sale_items_temp
 from ..models.items import ItemsModel
 from ..utility.validators import system_error_sales, sales_checker
 
@@ -94,7 +94,7 @@ class Sales(object):
                         
                 grand = 0
                 items = 0
-                sale_items = sales_model.sale_items_list()
+                sale_items = sale_items_temp
                 
                 for sale_item in sale_items:
                     num = sale_item.get('quantity')
@@ -104,7 +104,7 @@ class Sales(object):
 
             sale = sales_model.add_sales(payment_mode, grand, items, auth)
             sale_id = sales_model.last_sale_id()
-            list_sale_items = sales_model.sale_items_list()
+            list_sale_items = sale_items_temp
             for sale_item in list_sale_items:
                 item_id = sale_item.get('item_id')
                 item_name = sale_item.get('item_name')
@@ -112,9 +112,11 @@ class Sales(object):
                 price = sale_item.get('price')
                 total = sale_item.get('total')
                 sales_model.add_sale_items(sale_id, item_id, item_name, quantity, price, total, auth)
+            del sale_items_temp[:]
+            sold_items = sales_model.get_sale_items_by_sale_id(sale_id)
             return make_response(jsonify({
                 "status": "created",
-                "sale_items": sale_items,
+                "sale_items": sold_items,
                 "sale": sale
             }), 201)
         else:

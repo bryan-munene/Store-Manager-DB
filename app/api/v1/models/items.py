@@ -11,7 +11,7 @@ class ItemsModel():
     
     def add_item(self, name, price, quantity, image, category_id, reorder_point, auth):
         query = """INSERT INTO items(name, price, quantity, image, category, reorder_point, created_by)\
-                VALUES(%s,%s,%s,%s,%s,%s);"""
+                VALUES(%s,%s,%s,%s,%s,%s,%s);"""
         print(query)
         cur.execute(query, (name, price, quantity, image, category_id, reorder_point, auth))
         conn.commit()

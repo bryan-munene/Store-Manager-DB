@@ -354,13 +354,13 @@ def system_error_sales(request):
         return e
     except NameError as e:
         return e
-
-    try:
-        item_id = ordered_item.get('item_id')
-        quantity = ordered_item.get('quantity')
-    except TypeError as e:
-        return e
-    except KeyError as e:
-        return e
-    except NameError as e:
-        return e
+    for ordered_item in ordered_items:
+        try:
+            item_id = ordered_item['item_id']
+            quantity = ordered_item['quantity']
+        except TypeError as e:
+            return e
+        except KeyError as e:
+            return e
+        except NameError as e:
+            return e

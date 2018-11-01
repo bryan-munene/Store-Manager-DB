@@ -1,5 +1,5 @@
 from .db_conn import conn, cur
-sale_items = []
+sale_items_temp = []
         
 class SalesModel():
     def __init__(self, item_id=None, name=None, quantity=None, price=None, total=None, auth=None, user_id=None):
@@ -12,7 +12,7 @@ class SalesModel():
         self.user_id = user_id
     
     def add_sale_items_list(self, item_id, name, quantity, price, total, auth):
-        self.sale_item_id = len(sale_items)+1
+        self.sale_item_id = len(sale_items_temp)+1
         sale_item = {
             "sale_item_id": self.sale_item_id,
             "item_id": item_id,
@@ -23,7 +23,7 @@ class SalesModel():
             "auth": auth
             }
 
-        sale_items.append(sale_item)
+        sale_items_temp.append(sale_item)
 
         return sale_item
 
@@ -91,9 +91,7 @@ class SalesModel():
         self.sale = cur.fetchone() 
 
         return self.sale
-        
-    def sale_items_list(self):
-        return sale_items
+   
 
     def get_sales_by_user_id(self, user_id):
         query = """SELECT * FROM sales WHERE created_by = %s;"""
