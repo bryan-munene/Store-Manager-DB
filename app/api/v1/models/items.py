@@ -50,12 +50,12 @@ class ItemsModel():
 
         return self.item
 
-    def update_item(self, item_id, price, quantity, category_id, reorder_point, auth):
+    def update_item(self, item_id, price, quantity, image, category_id, reorder_point, auth):
         query = """UPDATE items 
-                  SET price = %s, quantity = %s, category = %s, reorder_point = %s, created_by = %s
+                  SET price = %s, quantity = %s, image = %s, category = %s, reorder_point = %s, created_by = %s
                   WHERE item_id= %s
                 """
-        cur.execute(query, (price, quantity, category_id, reorder_point, auth, item_id))
+        cur.execute(query, (price, quantity, image, category_id, reorder_point, auth, item_id))
         conn.commit()
 
         query_confirm = """SELECT * FROM items WHERE item_id = %s;"""

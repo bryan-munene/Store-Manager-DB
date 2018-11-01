@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, make_response, session
 from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from ..models.items import ItemsModel
 from ..models.categories import CategoriesModel
-from ..utility.validators import system_error_items, items_checker
+from ..utility.validators import system_error_items, items_checker, system_error_items_update, items_update_checker, update_stock_checker, system_error_update_stock
 
 items_model = ItemsModel()
 categories_model = CategoriesModel()
@@ -118,13 +118,19 @@ class Items(object):
                     "message": "Admin User must be logged in"
                     }), 401)
             
-            if not request.is_json:
-                return make_response(
-                    jsonify({
-                        "status": "wrong format",
-                        "messenge": "request not json"
-                    }), 400)
-    
+            sys_checks = system_error_items_update(request)
+            if sys_checks:
+                return make_response(jsonify({
+                    "status":"server error",
+                    "message":"we encountered a system error try again"
+                    }), 500)
+            checks = items_update_checker(request)
+            if checks:
+                return make_response(jsonify({
+                    "status":"not acceptable",
+                    "message":checks
+                    }), 406)
+
             data = request.get_json()
             price = data['price']
             image = data['image']
@@ -132,20 +138,6 @@ class Items(object):
             reorder_point = data['reorder_point']
             category_id = data['category_id']
             auth = auth_user['user_id']
-            
-            if price == "" or image == "" or quantity == "":
-                return make_response(jsonify({
-                    "status": "not acceptable",
-                    "message": "all fields must be filled"
-                }), 406)
-
-            if not price.isdigit():
-                return make_response(
-                    jsonify({
-                        "status": "not acceptable",
-                        "message": "price not valid"
-                        }), 400)
-
             
             category = categories_model.get_by_id(category_id)
             if not category:
@@ -163,7 +155,7 @@ class Items(object):
                         }), 403)
 
             else:
-                item = items_model.update_item(item_id, price, quantity, category_id, reorder_point, auth)
+                item = items_model.update_item(item_id, price, quantity, image, category_id, reorder_point, auth)
                 items = items_model.get_all()
                 return make_response(jsonify({
                     "status": "created",
@@ -230,31 +222,23 @@ class Items(object):
                 "status": "unauthorised",
                 "message": "Admin User must be logged in"
                 }), 401)
-        
-        if not request.is_json:
-            return make_response(
-                jsonify({
-                    "status": "wrong format",
-                    "messenge": "request not json"
-                }), 400)
 
+        sys_checks = system_error_update_stock(request)
+        if sys_checks:
+            return make_response(jsonify({
+                "status":"server error",
+                "message":"we encountered a system error try again"
+                }), 500)
+        checks = update_stock_checker(request)
+        if checks:
+            return make_response(jsonify({
+                "status":"not acceptable",
+                "message":checks
+                }), 406)
+        
         data = request.get_json()
         quantity = data['quantity']
                 
-        if quantity == "":
-            return make_response(jsonify({
-                "status": "not acceptable",
-                "message": "all fields must be filled"
-            }), 406)
-
-        if not quantity.isdigit():
-            return make_response(
-                jsonify({
-                    "status": "not acceptable",
-                    "message": "quantity not valid"
-                    }), 400)
-
-        
         item = items_model.get_by_id(item_id)
         if not item:
             return make_response(

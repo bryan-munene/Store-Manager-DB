@@ -225,3 +225,83 @@ def system_error_items(request):
         return e
     except NameError as e:
         return e
+
+def items_update_checker(request):
+    '''
+    this function checks all the inputs for the items part
+    '''
+    if not request.is_json:
+        return make_response(
+            jsonify({
+                "status": "wrong format",
+                "messenge": "request not json"
+            }), 400)
+
+    data = request.get_json()
+    price = data['price']
+    image = data['image']
+    quantity = data['quantity']
+    
+    if price == "" or image == "" or quantity == "":
+        return make_response(jsonify({
+            "status": "not acceptable",
+            "message": "all fields must be filled"
+        }), 406)
+
+    if not price.isdigit():
+        return make_response(
+            jsonify({
+                "status": "not acceptable",
+                "message": "price not valid"
+                }), 400)
+
+
+def system_error_items_update(request):
+    try:
+        data = request.get_json()
+        price = data['price']
+        image = data['image']
+        quantity = data['quantity']
+        reorder_point = data['reorder_point']
+        category_id = data['category_id']
+    except TypeError as e:
+        return e
+    except KeyError as e:
+        return e
+    except NameError as e:
+        return e
+
+def update_stock_checker(request):
+    '''
+    this function checks all the inputs for the update user role part
+    '''
+    
+    if not request.is_json:
+        return "request not json"
+    
+    data = request.get_json()
+    quantity = data['quantity']
+                
+    if quantity == "":
+        return make_response(jsonify({
+            "status": "not acceptable",
+            "message": "all fields must be filled"
+        }), 406)
+
+    if not quantity.isdigit():
+        return make_response(
+            jsonify({
+                "status": "not acceptable",
+                "message": "quantity not valid"
+                }), 400)
+
+def system_error_update_stock(request):
+    try:
+        data = request.get_json()
+        quantity = data['quantity']
+    except TypeError as e:
+        return e
+    except KeyError as e:
+        return e
+    except NameError as e:
+        return e

@@ -302,7 +302,6 @@ class Users(object):
 
         else:
             user = user_model.update_user_role(user_id, role)
-            users = user_model.get_all()
             return make_response(jsonify({
                 "status": "created",
                 "user": user
