@@ -112,11 +112,8 @@ class Sales(object):
                 price = sale_item.get('price')
                 total = sale_item.get('total')
                 sales_model.add_sale_items(sale_id, item_id, item_name, quantity, price, total, auth)
-            sales = sales_model.get_all_sales()
-
             return make_response(jsonify({
                 "status": "created",
-                "sales": sales,
                 "sale_items": sale_items,
                 "sale": sale
             }), 201)
@@ -143,7 +140,7 @@ class Sales(object):
             if not sales:
                 return make_response(jsonify({
                     "status": "unauthorised",
-                    "message": "You are not authorised to view this record!"
+                    "message": "You don't have any sales records!"
                     }), 401)
             return make_response(jsonify({
                 "status": "ok",

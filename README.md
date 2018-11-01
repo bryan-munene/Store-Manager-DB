@@ -1,4 +1,12 @@
 # Store-Manager-DB
+
+![license](https://img.shields.io/github/license/mashape/apistatus.svg)
+[![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
+[![Build Status](https://travis-ci.org/bryan-munene/Store-Manager-DB.svg?branch=develop)](https://travis-ci.org/bryan-munene/Store-Manager-DB)
+[![codecov](https://codecov.io/gh/bryan-munene/Store-Manager-DB/branch/develop/graph/badge.svg)](https://codecov.io/gh/bryan-munene/Store-Manager-DB)
+[![Maintainability](https://api.codeclimate.com/v1/badges/f0adf3f5a8c1ca0fbfd2/maintainability)](https://codeclimate.com/github/bryan-munene/Store-Manager-DB/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/f0adf3f5a8c1ca0fbfd2/test_coverage)](https://codeclimate.com/github/bryan-munene/Store-Manager-DB/test_coverage)
+
 Store Manager is a web application that helps store owners manage sales and product inventory records. This application is meant for use in a single store. This is an implementation using a database.
 
 
