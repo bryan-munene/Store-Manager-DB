@@ -127,14 +127,19 @@ class Categories(object):
                     "status": "not acceptable",
                     "message": "category does not exist"
                 }), 406)
-
-            else:
-                category = categories_model.update_category(
-                    category_id, name, description)
+            category = categories_model.get_by_name(name)
+            if category:
                 return make_response(jsonify({
-                    "status": "created",
-                    "category": category
-                }), 201)
+                    "status": "not acceptable",
+                    "message": "category already exists"
+                }), 406)
+            
+            category = categories_model.update_category(
+                category_id, name, description)
+            return make_response(jsonify({
+                "status": "created",
+                "category": category
+            }), 201)
 
         elif request.method == 'DELETE':
             auth_user = get_jwt_identity()
