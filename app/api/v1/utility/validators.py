@@ -4,7 +4,7 @@ import re
 
 def login_checker(request):
     '''
-    this function checks the validity of all the inputs for the registration part
+    this function checks the validity of all the inputs for the login part
     '''
     if not request.is_json:
         return "request not json"
@@ -28,18 +28,10 @@ def login_checker(request):
         return False
 
 
-def json_checker(request):
-    '''
-    this function checks the validity of if the request object is in json form
-    '''
-    if not request.is_json:
-        return False
-    return True
-
 
 def system_error_login(request):
     '''
-    this function checks all the inputs for the update user role part
+    this function checks all the keys for the input in login part
     '''
     try:
         data = request.get_json()
@@ -55,7 +47,7 @@ def system_error_login(request):
 
 def system_error_registration(request):
     '''
-    this function checks all the inputs for the update user role part
+    this function checks all the keys for the input in registration part
     '''
     try:
         data = request.get_json()
@@ -74,7 +66,7 @@ def system_error_registration(request):
 
 def system_error_update(request):
     '''
-    this function checks all the inputs for the update user role part
+    this function checks all the keys for the input in user update part
     '''
     try:
         data = request.get_json()
@@ -92,7 +84,7 @@ def system_error_update(request):
 
 def system_error_update_role(request):
     '''
-    this function checks all the inputs for the update user role part
+    this function checks all the keys for the input in user update role part
     '''
     try:
         data = request.get_json()
@@ -134,7 +126,7 @@ def registration_checker(request):
 
 def update_checker(request):
     '''
-    this function checks all the inputs for the registration part
+    this function checks all the inputs for the update user part
     '''
     if not request.is_json:
         return "request not json"
@@ -208,7 +200,7 @@ def items_checker(request):
 
 def system_error_items(request):
     '''
-    this function checks all the inputs for the update user role part
+    this function checks all the keys for the input in add item part
     '''
     try:
         data = request.get_json()
@@ -228,7 +220,7 @@ def system_error_items(request):
 
 def items_update_checker(request):
     '''
-    this function checks all the inputs for the items part
+    this function checks all the keys for the input in item update part
     '''
     if not request.is_json:
         return "request not json"
@@ -266,7 +258,7 @@ def system_error_items_update(request):
 
 def update_stock_checker(request):
     '''
-    this function checks all the inputs for the update user role part
+    this function checks all the inputs for the update item stock part
     '''
     if not request.is_json:
         return "request not json"
@@ -283,7 +275,7 @@ def update_stock_checker(request):
 
 def system_error_update_stock(request):
     '''
-    this function checks all the inputs for the update user role part
+    this function checks all the keys for the input in item update stock part
     '''
     try:
         data = request.get_json()
@@ -298,7 +290,7 @@ def system_error_update_stock(request):
 
 def system_error_categories(request):
     '''
-    this function checks all the inputs for the update user role part
+    this function checks all the keys for the input in categories section
     '''
     try:
         data = request.get_json()
@@ -314,7 +306,7 @@ def system_error_categories(request):
 
 def sales_checker(request):
     '''
-    this function checks all the inputs for the update user role part
+    this function checks all the inputs for the sales part
     '''
     if not request.is_json:
         return "request not json"
@@ -346,7 +338,7 @@ def sales_checker(request):
 
 def system_error_sales(request):
     '''
-    this function checks all the inputs for the update user role part
+    this function checks all the keys for the input in sales part
     '''
     try:
         data = request.get_json()
