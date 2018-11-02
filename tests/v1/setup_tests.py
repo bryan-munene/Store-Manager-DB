@@ -21,7 +21,7 @@ sample_user=[
             },
             {
             "email":"test@adminmail.com", 
-            "password":"Adm1n234"
+	        "password":"Adm1n234"
             }
 ]
 
@@ -73,6 +73,8 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         this is a helper function for an ordinary user's registration
         '''
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
         sign_up = self.test_client.post('/api/v2/register', data = json.dumps(sample_user[0]), content_type = 'application/json')
         assert (sign_up.status_code == 201)
         logout= self.test_client.get('/api/v2/logout', content_type = 'application/json')
@@ -82,6 +84,8 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         this is a helper function for an ordinary user's login
         '''
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
         sign_in = self.test_client.post('/api/v2/login', data = json.dumps(sample_user[1]), content_type = 'application/json')
         assert (sign_in.status_code == 200)
     
@@ -89,6 +93,8 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         this is a helper function for an admin user's login
         '''
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
         sign_in = self.test_client.post('/api/v2/login', data = json.dumps(sample_user[2]), content_type = 'application/json')
         data = json.loads(sign_in.data.decode('utf-8'))
         assert (sign_in.status_code == 200)

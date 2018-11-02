@@ -181,8 +181,8 @@ class Test_Users(Store_Manager_Base):
     def test_register_without_admin_logged_in(self):
         register = self.test_client.post('/api/v2/register', data = sample_registration[9], content_type = 'application/json')
         response = json.loads(register.data.decode('utf-8'))
-        assert(response['status'] == "unauthorised")
-        assert(register.status_code == 401)
+        assert(response['msg'] == "Bad Authorization header. Expected value 'Bearer <JWT>'")
+        assert(register.status_code==401)
     
         
     #USER INPUT CHECKS
@@ -192,35 +192,35 @@ class Test_Users(Store_Manager_Base):
         register = self.test_client.post('/api/v2/register', data = sample_registration[0], content_type = 'application/json', headers=dict(Authorization=self.token))
         response = json.loads(register.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
-        assert(register.status_code == 400)
+        assert(register.status_code == 406)
 
     def test_register_empty_email(self):
         self.token = store_manager.sign_in_admin()
         register = self.test_client.post('/api/v2/register', data = sample_registration[1], content_type = 'application/json', headers=dict(Authorization=self.token))
         response = json.loads(register.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
-        assert(register.status_code == 400)
+        assert(register.status_code == 406)
 
     def test_register_empty_username(self):
         self.token = store_manager.sign_in_admin()
         register = self.test_client.post('/api/v2/register', data = sample_registration[2], content_type = 'application/json', headers=dict(Authorization=self.token))
         response = json.loads(register.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
-        assert(register.status_code == 400)
+        assert(register.status_code == 406)
 
     def test_register_empty_password(self):
         self.token = store_manager.sign_in_admin()
         register = self.test_client.post('/api/v2/register', data = sample_registration[3], content_type = 'application/json', headers=dict(Authorization=self.token))
         response = json.loads(register.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
-        assert(register.status_code == 400)
+        assert(register.status_code == 406)
 
     def test_register_empty_password2(self):
         self.token = store_manager.sign_in_admin()
         register = self.test_client.post('/api/v2/register', data = sample_registration[4], content_type = 'application/json', headers=dict(Authorization=self.token))
         response = json.loads(register.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
-        assert(register.status_code == 400)
+        assert(register.status_code == 406)
 
 
     #EMAIL FORMAT CHECKS
@@ -230,14 +230,14 @@ class Test_Users(Store_Manager_Base):
         register = self.test_client.post('/api/v2/register', data = sample_registration[5], content_type = 'application/json', headers=dict(Authorization=self.token))
         response = json.loads(register.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
-        assert(register.status_code == 400)
+        assert(register.status_code == 406)
 
     def test_register_wrong_email_format1(self):
         self.token = store_manager.sign_in_admin()
         register = self.test_client.post('/api/v2/register', data = sample_registration[6], content_type = 'application/json', headers=dict(Authorization=self.token))
         response = json.loads(register.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
-        assert(register.status_code == 400)
+        assert(register.status_code == 406)
 
 
     #PASSWORD CHECK
@@ -247,14 +247,14 @@ class Test_Users(Store_Manager_Base):
         register = self.test_client.post('/api/v2/register', data = sample_registration[7], content_type = 'application/json', headers=dict(Authorization=self.token))
         response = json.loads(register.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
-        assert(register.status_code == 400)
+        assert(register.status_code == 406)
 
     def test_register_passwords_matching1(self):
         self.token = store_manager.sign_in_admin()
         register = self.test_client.post('/api/v2/register', data = sample_registration[8], content_type = 'application/json', headers=dict(Authorization=self.token))
         response = json.loads(register.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
-        assert(register.status_code == 400)
+        assert(register.status_code == 406)
 
 
     #CORRECT INPUT
@@ -274,7 +274,7 @@ class Test_Users(Store_Manager_Base):
         register = self.test_client.post('/api/v2/register', data = sample_registration[9], content_type = 'application/json', headers=dict(Authorization=self.token))
         response = json.loads(register.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
-        assert (register.status_code == 400)
+        assert (register.status_code == 406)
 
     '''-------------------------------------------------------------------------------------------------------------------------------'''
 
@@ -290,8 +290,8 @@ class Test_Users(Store_Manager_Base):
     def test_logout_without_logged_in(self):
         logout= self.test_client.delete('/api/v2/logout', content_type = 'application/json')
         response = json.loads(logout.data.decode('utf-8'))
-        assert(response['msg'] == "Token has been revoked")
-        assert(logout.status_code == 400)
+        assert(response['msg'] == "Bad Authorization header. Expected value 'Bearer <JWT>'")
+        assert(logout.status_code==401)
 
 
     '''-------------------------------------------------------------------------------------------------------------------------------'''
@@ -302,7 +302,7 @@ class Test_Users(Store_Manager_Base):
     def test_users_retrive_all_no_admin_login(self):
         get= self.test_client.get('/api/v2/users',content_type='application/json')
         response = json.loads(get.data.decode('utf-8'))
-        assert(response['status'] == "unauthorised")
+        assert(response['msg'] == "Bad Authorization header. Expected value 'Bearer <JWT>'")
         assert(get.status_code==401)
 
 
@@ -322,7 +322,7 @@ class Test_Users(Store_Manager_Base):
     def test_users_retrive_user_no_admin_login(self):
         get= self.test_client.get('/api/v2/users/1',content_type='application/json')
         response = json.loads(get.data.decode('utf-8'))
-        assert(response['status'] == "unauthorised")
+        assert(response['msg'] == "Bad Authorization header. Expected value 'Bearer <JWT>'")
         assert(get.status_code==401)
 
     def test_users_retrive_user_not_created(self):
@@ -354,7 +354,7 @@ class Test_Users(Store_Manager_Base):
     def test_users_update_user_no_admin_login(self):
         update= self.test_client.put('/api/v2/users/1',content_type='application/json')
         response = json.loads(update.data.decode('utf-8'))
-        assert(response['status'] == "unauthorised")
+        assert(response['msg'] == "Bad Authorization header. Expected value 'Bearer <JWT>'")
         assert(update.status_code==401)
 
     def test_users_update_user_not_created(self):
@@ -386,7 +386,7 @@ class Test_Users(Store_Manager_Base):
     def test_users_delete_user_no_admin_login(self):
         delete= self.test_client.delete('/api/v2/users/1',content_type='application/json')
         response = json.loads(delete.data.decode('utf-8'))
-        assert(response['status'] == "unauthorised")
+        assert(response['msg'] == "Bad Authorization header. Expected value 'Bearer <JWT>'")
         assert(delete.status_code==401)
 
     def test_users_delete_user_not_created(self):

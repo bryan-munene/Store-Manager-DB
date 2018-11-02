@@ -170,7 +170,7 @@ class DatabaseSetup(object):
         return queries
 
     def schema(self):
-        '''drops the schema and recreates it'''
+        '''drops the tables from the DB if they exist. Used in testing mostly.'''
         query1 = """DROP TABLE IF EXISTS users CASCADE;"""
         query2 = """DROP TABLE IF EXISTS categories CASCADE;"""
         query3 = """DROP TABLE IF EXISTS items CASCADE;"""

@@ -12,6 +12,7 @@ class SalesModel():
             total=None,
             auth=None,
             user_id=None):
+        '''Initializes the variables for the sales class'''
         self.item_id = item_id
         self.name = name
         self.quantity = quantity
@@ -21,6 +22,7 @@ class SalesModel():
         self.user_id = user_id
 
     def add_sale_items_list(self, item_id, name, quantity, price, total, auth):
+        '''Adds sale items to a temporary list until the sale object is created'''
         self.sale_item_id = len(sale_items_temp) + 1
         sale_item = {
             "sale_item_id": self.sale_item_id,
@@ -45,6 +47,7 @@ class SalesModel():
             price,
             total,
             auth):
+        '''Adds sale items given the above arguements. Then returns the sale items of the completed sale'''
         query = """INSERT INTO sale_items(sale_id, item_id, item_name, quantity, price, total, created_by)\
                 VALUES(%s,%s,%s,%s,%s,%s,%s);"""
 
@@ -66,6 +69,7 @@ class SalesModel():
         return self.sale_items
 
     def add_sales(self, payment_mode, items, grand, auth):
+        '''Adds sale given the above arguements. Then returns the created sale'''
         query = """INSERT INTO sales(payment_mode, number_of_items, grand_total, created_by)\
                 VALUES(%s,%s,%s,%s);"""
 
@@ -81,6 +85,7 @@ class SalesModel():
         return self.sale
 
     def last_sale_id(self):
+        '''Retrieves the last added sale id'''
         query = """SELECT sale_id FROM sales ORDER BY sale_id DESC LIMIT 1;"""
         cur.execute(query)
         sale_id = cur.fetchone()
@@ -89,6 +94,7 @@ class SalesModel():
         return sale_id
 
     def get_all_sales(self):
+        '''Retrieves all sales records'''
         query = """SELECT * FROM sales;"""
         cur.execute(query)
         self.sales = cur.fetchall()
@@ -96,6 +102,7 @@ class SalesModel():
         return self.sales
 
     def get_all_sale_items(self):
+        '''retrieves all sale items'''
         query = """SELECT * FROM sale_items;"""
         cur.execute(query)
         self.sale_items = cur.fetchall()
@@ -103,6 +110,7 @@ class SalesModel():
         return self.sale_items
 
     def get_sale_items_by_sale_id(self, sale_id):
+        '''retrieves all the sale items from a specific sale by referencing that sales sale id'''
         query = """SELECT * FROM sale_items WHERE sale_id = %s;"""
         cur.execute(query, (sale_id, ))
         self.sale_items = cur.fetchall()
@@ -110,6 +118,7 @@ class SalesModel():
         return self.sale_items
 
     def get_sales_by_sale_id(self, sale_id):
+        '''retrieves a sale by using it's sale id'''
         query = """SELECT * FROM sales WHERE sale_id = %s;"""
         cur.execute(query, (sale_id, ))
         self.sale = cur.fetchone()
@@ -117,6 +126,7 @@ class SalesModel():
         return self.sale
 
     def get_sales_by_user_id(self, user_id):
+        '''retrieves all the sales made by a specific user by referencing their user id'''
         query = """SELECT * FROM sales WHERE created_by = %s;"""
         cur.execute(query, (user_id, ))
         self.sales = cur.fetchall()

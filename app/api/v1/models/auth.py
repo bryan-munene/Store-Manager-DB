@@ -17,6 +17,7 @@ class UserModel():
             pswrd=None,
             is_admin=None,
             user_id=None):
+        '''Initializes the variables for the user class'''
         self.name = name
         self.email = email
         self.username = usrnm
@@ -25,6 +26,7 @@ class UserModel():
         self.user_id = user_id
 
     def add_user(self, name, email, usrnm, pswrd, is_admin):
+        '''Adds user given the above arguements. Then returns the created user'''
         self.password = generate_password_hash(pswrd, method='sha256')
         query = """INSERT INTO users(name, username, email, password, is_admin)\
                 VALUES(%s,%s,%s,%s,%s);"""
@@ -39,12 +41,14 @@ class UserModel():
         return self.user
 
     def get_all(self):
+        '''gets all records of users in the databas and returns them'''
         query = """SELECT user_id, name, username, email, is_admin FROM users;"""
         cur.execute(query)
         self.users = cur.fetchall()
         return self.users
 
     def get_user_by_email(self, email):
+        '''retrieves one user by finding them using their unique email'''
         query = """SELECT user_id, name, username, email, is_admin FROM users WHERE email = %s;"""
         cur.execute(query, (email, ))
         self.user = cur.fetchone()
@@ -52,6 +56,7 @@ class UserModel():
         return self.user
 
     def get_user_by_id(self, user_id):
+        '''retrieves one user by finding them using their unique user_id'''
         query = """SELECT user_id, name, username, email, is_admin FROM users WHERE user_id = %s;"""
         cur.execute(query, (user_id, ))
         self.user = cur.fetchone()
@@ -59,6 +64,7 @@ class UserModel():
         return self.user
 
     def get_user_password_by_email(self, email):
+        '''retrieves a user's password by finding it using their unique email'''
         query = """SELECT password FROM users WHERE email = %s;"""
         cur.execute(query, (email, ))
         self.user = cur.fetchone()
@@ -66,6 +72,7 @@ class UserModel():
         return self.user
 
     def get_user_username_by_email(self, email):
+        '''retrieves a user's username by finding it using their unique email'''
         query = """SELECT username FROM users WHERE email = %s;"""
         cur.execute(query, (email, ))
         self.user = cur.fetchone()
@@ -73,6 +80,7 @@ class UserModel():
         return self.user
 
     def get_user_role_by_email(self, email):
+        '''retrieves a user's role by finding it using their unique email'''
         query = """SELECT is_admin FROM users WHERE email = %s;"""
         cur.execute(query, (email, ))
         self.user_role = cur.fetchone()
@@ -84,6 +92,7 @@ class UserModel():
         return check_password_hash(user_password_hash, password)
 
     def get_user_id_by_email(self, email):
+        '''retrieves a user's user_id by finding it using their unique email'''
         query = """SELECT user_id FROM users WHERE email = %s;"""
         cur.execute(query, (email, ))
         self.users = cur.fetchone()
@@ -91,6 +100,7 @@ class UserModel():
         return self.users
 
     def update_user(self, user_id, name, usrnm, pswrd):
+        '''updates user's details except for the role'''
         self.password = generate_password_hash(pswrd, method='sha256')
         query = """UPDATE users
                   SET name = %s, username = %s, password = %s
@@ -106,6 +116,7 @@ class UserModel():
         return self.user
 
     def update_user_role(self, user_id, is_admin):
+        '''updates user's role'''
         query = """UPDATE users
                   SET is_admin = %s
                   WHERE user_id = %s
@@ -120,6 +131,7 @@ class UserModel():
         return self.user
 
     def delete_user(self, user_id):
+        '''deletes a user by finding them using the user_id'''
         user = self.get_user_by_id(user_id)
 
         if user:
@@ -135,6 +147,7 @@ class UserModel():
         return self.user
 
     def access_token(self, email, password):
+        '''creates user access token if all the credentials are right'''
         self.password_output = self.get_user_password_by_email(email)
         self.password = self.password_output['password']
         self.user = self.get_user_by_email(email)
