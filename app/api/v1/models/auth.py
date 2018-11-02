@@ -9,6 +9,7 @@ from .db_conn import conn, cur
 
 
 class UserModel():
+    '''Handles the data logic of the users section'''
     def __init__(
             self,
             name=None,

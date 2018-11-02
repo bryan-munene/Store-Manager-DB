@@ -2,6 +2,7 @@ from .db_conn import conn, cur
 
 
 class ItemsModel():
+    '''Handles the data logic of the items section'''
     def __init__(
             self,
             name=None,

@@ -2,6 +2,7 @@ from .db_conn import conn, cur
 
 
 class CategoriesModel():
+    '''Handles the data logic of the categories section'''
     def __init__(
             self,
             name=None,

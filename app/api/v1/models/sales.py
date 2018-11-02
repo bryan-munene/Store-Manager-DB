@@ -3,6 +3,7 @@ sale_items_temp = []
 
 
 class SalesModel():
+    '''Handles the data logic of the sales section'''
     def __init__(
             self,
             item_id=None,
