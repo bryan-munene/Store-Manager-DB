@@ -13,12 +13,14 @@ categories_bp = Blueprint('categories', __name__, url_prefix='/api/v2')
 
 
 class Categories(object):
+    '''Handles the application logic of the categories part'''
     def __init__(self=None, *args, **kwargs):
         self.request = request
 
     @categories_bp.route('/add_category', methods=["POST"])
     @jwt_required
     def add_categories(*args, **kwargs):
+        '''handles the creation of a new category'''
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({
@@ -68,6 +70,7 @@ class Categories(object):
     @categories_bp.route('/categories', methods=["GET"])
     @jwt_required
     def get_all_categories(*args, **kwargs):
+        '''handles the retrieval of all categories'''
         categories = categories_model.get_all()
         if not categories:
             return make_response(jsonify({
@@ -89,7 +92,9 @@ class Categories(object):
             "DELETE"])
     @jwt_required
     def specific_user(category_id):
+        '''handles the update, retrieval and deletion of a category'''
         if request.method == 'PUT':
+            '''update is handled here'''
             auth_user = get_jwt_identity()
             if not auth_user:
                 return make_response(jsonify({
@@ -142,6 +147,7 @@ class Categories(object):
             }), 201)
 
         elif request.method == 'DELETE':
+            '''deletion is handled here'''
             auth_user = get_jwt_identity()
             if not auth_user:
                 return make_response(jsonify({
@@ -170,6 +176,7 @@ class Categories(object):
                 }), 404)
 
         else:
+            '''handles the retrieval of the category'''
             category = categories_model.get_by_id(category_id)
             if category:
                 return make_response(

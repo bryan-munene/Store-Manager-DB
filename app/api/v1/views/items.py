@@ -20,12 +20,15 @@ def index():
 
 
 class Items(object):
+    '''Handles the application logic of the items part'''
     def __init__(self=None, *args, **kwargs):
+        '''initializes the class and it's variables'''
         self.request = request
 
     @items_bp.route('/add_item', methods=["POST"])
     @jwt_required
     def add_items(*args, **kwargs):
+        '''handles the creation of new items'''
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({
@@ -95,6 +98,7 @@ class Items(object):
     @items_bp.route("/items", methods=["GET"])
     @jwt_required
     def items_all(*args, **kwargs):
+        '''handle the display of all items'''
         items = items_model.get_all()
         if not items:
             return make_response(jsonify({
@@ -111,7 +115,9 @@ class Items(object):
     @items_bp.route('/items/<int:item_id>', methods=["GET", "PUT", "DELETE"])
     @jwt_required
     def specific_item(item_id):
+        '''handles the update, deletion and retrieval of a specific item'''
         if request.method == 'PUT':
+            '''handles the update'''
             auth_user = get_jwt_identity()
             if not auth_user:
                 return make_response(jsonify({
@@ -171,6 +177,7 @@ class Items(object):
                 }), 201)
 
         elif request.method == 'DELETE':
+            '''handles the deletion'''
             auth_user = get_jwt_identity()
             if not auth_user:
                 return make_response(jsonify({
@@ -199,6 +206,7 @@ class Items(object):
                 }), 404)
 
         else:
+            '''handles the retrieval'''
             item = items_model.get_by_id(item_id)
             if item:
                 return make_response(
@@ -215,6 +223,7 @@ class Items(object):
     @items_bp.route('/stock/<int:item_id>', methods=["PUT"])
     @jwt_required
     def item__stock(item_id):
+        '''handles the update of the sock of a specific item'''
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({

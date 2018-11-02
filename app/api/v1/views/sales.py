@@ -15,12 +15,15 @@ sales_model = SalesModel()
 
 
 class Sales(object):
+    '''Handles the application logic of the users part'''
     def __init__(self=None, *args, **kwargs):
+        '''initializes the class and it's variables'''
         self.request = request
 
     @sales_bp.route("/make_sale", methods=["POST"])
     @jwt_required
     def make_sale(*args, **kwargs):
+        '''handles the creation of a sale'''
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({
@@ -130,6 +133,7 @@ class Sales(object):
     @sales_bp.route("/sales", methods=["GET"])
     @jwt_required
     def sales_all(*args, **kwargs):
+        '''handles the retrieval of all sales'''
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({
@@ -166,6 +170,7 @@ class Sales(object):
     @sales_bp.route('/sales/<int:sale_id>', methods=['GET'])
     @jwt_required
     def specific_sale(sale_id):
+        '''handles the retrieval of a specific sale'''
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({

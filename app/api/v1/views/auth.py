@@ -9,7 +9,7 @@ import datetime
 from app import blacklist
 
 from ..models.auth import UserModel
-from ..utility.validators import json_checker, login_checker, registration_checker, system_error_login, system_error_registration, update_checker, update_role_checker, system_error_update, system_error_update_role
+from ..utility.validators import login_checker, registration_checker, system_error_login, system_error_registration, update_checker, update_role_checker, system_error_update, system_error_update_role
 
 users_bp = Blueprint('users', __name__, url_prefix='/api/v2')
 
@@ -17,11 +17,14 @@ user_model = UserModel()
 
 
 class Users(object):
+    '''Handles the application logic of the users part'''
     def __init__(self=None, *args, **kwargs):
+        '''initializes the class and it's variables'''
         self.request = request
 
     @users_bp.route("/login", methods=["POST"])
     def user_login(*args, **kwargs):
+        '''handles login of users'''
         user = get_jwt_identity()
         if user:
             return make_response(jsonify({
@@ -71,6 +74,7 @@ class Users(object):
     @users_bp.route("/register", methods=["POST"])
     @jwt_required
     def register(*args, **kwargs):
+        '''handles the registration of new users and is a protected route'''
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({
@@ -122,6 +126,7 @@ class Users(object):
     @users_bp.route("/logout", methods=["DELETE"])
     @jwt_required
     def logout(*args, **kwargs):
+        '''handles user logout. it is a protected route'''
         jti = get_raw_jwt()['jti']
         blacklist.add(jti)
         return make_response(jsonify({
@@ -132,6 +137,7 @@ class Users(object):
     @users_bp.route("/users", methods=["GET"])
     @jwt_required
     def users_all(*args, **kwargs):
+        '''handles retrieval and display of all users'''
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({
@@ -161,7 +167,9 @@ class Users(object):
     @users_bp.route("/users/<int:user_id>", methods=["GET", "PUT", "DELETE"])
     @jwt_required
     def specific_user(user_id):
+        '''handles update, retrieval and deletion of a specific user'''
         if request.method == 'PUT':
+            '''this handles the update part'''
             auth_user = get_jwt_identity()
             if not auth_user:
                 return make_response(jsonify({
@@ -209,6 +217,7 @@ class Users(object):
                 }), 201)
 
         elif request.method == 'DELETE':
+            '''this handles the deletion of a specific user'''
             auth_user = get_jwt_identity()
             if not auth_user:
                 return make_response(jsonify({
@@ -237,6 +246,7 @@ class Users(object):
                 }), 404)
 
         else:
+            '''this is the retrieval of the specific user'''
             auth_user = get_jwt_identity()
             if not auth_user:
                 return make_response(jsonify({
@@ -269,6 +279,7 @@ class Users(object):
     @users_bp.route("/role/<int:user_id>", methods=["PUT"])
     @jwt_required
     def user_role(user_id):
+        '''handles the update of a user's role to admin'''
         auth_user = get_jwt_identity()
         if not auth_user:
             return make_response(jsonify({
