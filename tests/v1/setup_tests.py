@@ -10,7 +10,7 @@ url = os.getenv('DATABASE_URL_TEST')
 sample_user=[
             {
             "name":"test",
-            "email":"testee@mail.com",
+            "email":"test_details@mail.com",
             "username":"tester2",
             "password":"pass",
             "password2":"pass"
@@ -75,11 +75,10 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         self.app = create_app('testing')
         self.test_client = self.app.test_client()
-        sign_up = self.test_client.post('/api/v2/register', data = json.dumps(sample_user[0]), content_type = 'application/json')
+        self.token = self.sign_in_admin()
+        sign_up = self.test_client.post('/api/v2/register', data = json.dumps(sample_user[0]), content_type = 'application/json', headers=dict(Authorization=self.token))
         assert (sign_up.status_code == 201)
-        logout= self.test_client.get('/api/v2/logout', content_type = 'application/json')
-        assert(logout.status_code == 200)
-        
+                
     def sign_in_user(self):
         '''
         this is a helper function for an ordinary user's login
@@ -99,7 +98,6 @@ class Store_Manager_Base(unittest.TestCase):
         data = json.loads(sign_in.data.decode('utf-8'))
         assert (sign_in.status_code == 200)
         self.token = "Bearer " + data['token']
-        print(self.token)
         return self.token
 
     def add_items_helper(self):

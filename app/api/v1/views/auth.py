@@ -43,7 +43,7 @@ class Users(object):
             return make_response(jsonify({
                 "status": "not acceptable",
                 "message": checks
-            }), 400)
+            }), 406)
 
         data = request.get_json()
         email = data['email']
@@ -205,9 +205,9 @@ class Users(object):
             user = user_model.get_user_by_id(user_id)
             if not user:
                 return make_response(jsonify({
-                    "status": "not acceptable",
+                    "status": "not found",
                     "message": "user does not exist"
-                }), 406)
+                }), 404)
 
             else:
                 user = user_model.update_user(user_id, name, usrnm, pswrd)
