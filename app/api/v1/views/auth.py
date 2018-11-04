@@ -43,7 +43,7 @@ class Users(object):
             return make_response(jsonify({
                 "status": "not acceptable",
                 "message": checks
-            }), 406)
+            }), 400)
 
         data = request.get_json()
         email = data['email']
