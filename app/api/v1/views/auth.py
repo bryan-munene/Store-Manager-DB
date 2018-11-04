@@ -166,7 +166,7 @@ class Users(object):
 
     @users_bp.route("/users/<int:user_id>", methods=["GET", "PUT", "DELETE"])
     @jwt_required
-    def specific_user(user_id):
+    def specific_user(user_id, *args, **kwargs):
         '''handles update, retrieval and deletion of a specific user'''
         if request.method == 'PUT':
             '''this handles the update part'''

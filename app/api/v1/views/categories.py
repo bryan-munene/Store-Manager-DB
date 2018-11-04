@@ -91,7 +91,7 @@ class Categories(object):
             "PUT",
             "DELETE"])
     @jwt_required
-    def specific_user(category_id):
+    def specific_user(category_id, *args, **kwargs):
         '''handles the update, retrieval and deletion of a category'''
         if request.method == 'PUT':
             '''update is handled here'''
@@ -129,9 +129,9 @@ class Categories(object):
             category = categories_model.get_by_id(category_id)
             if not category:
                 return make_response(jsonify({
-                    "status": "not acceptable",
+                    "status": "not found",
                     "message": "category does not exist"
-                }), 406)
+                }), 404)
             category = categories_model.get_by_name(name)
             if category:
                 return make_response(jsonify({
@@ -172,7 +172,7 @@ class Categories(object):
             else:
                 return make_response(jsonify({
                     "status": "not found",
-                    "message": "users you are looking for do not esxist"
+                    "message": "category you are looking for does not esxist"
                 }), 404)
 
         else:
@@ -187,5 +187,5 @@ class Categories(object):
             else:
                 return make_response(jsonify({
                     "status": "not found",
-                    "message": "category you are looking for do not esxist"
+                    "message": "category you are looking for does not esxist"
                 }), 404)

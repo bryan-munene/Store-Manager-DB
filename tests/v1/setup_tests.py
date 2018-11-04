@@ -56,19 +56,19 @@ class Store_Manager_Base(unittest.TestCase):
         self.db = DatabaseSetup(url)
         self.test_client = self.app.test_client()
         self.app_context = self.app.app_context()
-        self.db.create_tables(url)
-        self.db.create_default_admin_user(url)
         self.app.testing = True
 
         with self.app_context:
+            self.db.create_tables(url)
+            self.db.create_default_admin_user(url)
             self.app_context.push()
             
     def tearDown(self):
         '''This method clears all the data and records from the tests ran. It is ran at the end of the tests.'''
         with self.app_context:
+            self.db.drop_tables(url)
             self.app_context.pop()
-        self.db.drop_tables(url)
-
+        
     def sign_up_user(self):
         '''
         this is a helper function for an ordinary user's registration

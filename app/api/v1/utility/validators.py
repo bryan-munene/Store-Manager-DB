@@ -169,9 +169,8 @@ def categories_checker(request):
 
     data = request.get_json()
     name = data['name']
-    description = data['description']
-
-    if name == "" or description == "":
+    
+    if name == "":
         return "Please fill all the required fields"
 
 
