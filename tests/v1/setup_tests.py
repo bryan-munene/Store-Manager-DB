@@ -3,8 +3,8 @@ import os
 from flask import json
 from app import create_app
 from manage import DatabaseSetup
+from instance.config import app_config
 
-url = os.getenv('DATABASE_URL_TEST')
 
 
 sample_user=[
@@ -27,10 +27,27 @@ sample_user=[
 
 
 sample_item = [
-    {"name":"Panadol", "price":"200",	"image":"image", "quantity":"12"},
-    {"name":"Amoxil", "price":"200",	"image":"image", "quantity":"12"}
+    {
+	"name":"Panadol", 
+	"price":"220",	
+	"image":"image", 
+	"quantity":"12", 
+	"reorder_point":"3", 
+	"category_id":"1"
+    },
+    {
+	"name":"Amoxil", 
+	"price":"200",	
+	"image":"image", 
+	"quantity":"12", 
+	"reorder_point":"3", 
+	"category_id":"1"
+    }
 ]
 
+sample_category = [
+    {"name":"painkillers", "description":"alleviates pain"}
+]
 
 sample_sale = [{
             "payment_mode":"Cash",
@@ -53,20 +70,20 @@ class Store_Manager_Base(unittest.TestCase):
     def setUp(self):
         '''This method sets up the necessary parameters such as the test client, test db and testing setting in the app'''
         self.app = create_app('testing')
-        self.db = DatabaseSetup(url)
+        self.db = DatabaseSetup('testing')
         self.test_client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app.testing = True
 
         with self.app_context:
-            self.db.create_tables(url)
-            self.db.create_default_admin_user(url)
+            self.db.create_tables()
+            self.db.create_default_admin_user()
             self.app_context.push()
             
     def tearDown(self):
         '''This method clears all the data and records from the tests ran. It is ran at the end of the tests.'''
         with self.app_context:
-            self.db.drop_tables(url)
+            self.db.drop_tables()
             self.app_context.pop()
         
     def sign_up_user(self):
@@ -85,8 +102,12 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         self.app = create_app('testing')
         self.test_client = self.app.test_client()
+        self.sign_up_user()
         sign_in = self.test_client.post('/api/v2/login', data = json.dumps(sample_user[1]), content_type = 'application/json')
+        data = json.loads(sign_in.data.decode('utf-8'))
         assert (sign_in.status_code == 200)
+        self.token = "Bearer " + data['token']
+        return self.token
     
     def sign_in_admin(self):
         '''
@@ -100,19 +121,36 @@ class Store_Manager_Base(unittest.TestCase):
         self.token = "Bearer " + data['token']
         return self.token
 
+    def add_category_helper(self):
+        '''
+        this is a helper function for adding categories
+        '''
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
+        self.token = self.sign_in_admin()
+        add_category = self.test_client.post('/api/v2/add_category', data=json.dumps(sample_category[0]) ,content_type='application/json', headers=dict(Authorization=self.token))
+        assert(add_category.status_code==201)
+        
     def add_items_helper(self):
         '''
         this is a helper function for adding items
         '''
-        add_item = self.test_client.post('/api/v2/add_item', data=json.dumps(sample_item[0]) ,content_type='application/json', headers= self.token)
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
+        self.token = self.sign_in_admin()
+        self.add_category_helper()
+        add_item = self.test_client.post('/api/v2/add_item', data=json.dumps(sample_item[0]) ,content_type='application/json', headers=dict(Authorization=self.token))
         assert(add_item.status_code==201)
-        add_item = self.test_client.post('/api/v2/add_item', data=json.dumps(sample_item[1]) ,content_type='application/json', headers= self.token)
+        add_item = self.test_client.post('/api/v2/add_item', data=json.dumps(sample_item[1]) ,content_type='application/json', headers=dict(Authorization=self.token))
         assert(add_item.status_code==201)
         
     def make_sale_helper(self):
         '''
         this is a helper function to make a sale
         '''
-        sell = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[0]) ,content_type='application/json', headers= self.token)
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
+        self.token = self.sign_in_user()
+        sell = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[0]) ,content_type='application/json', headers=dict(Authorization=self.token))
         assert(sell.status_code==201)
         

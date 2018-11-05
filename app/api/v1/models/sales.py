@@ -1,4 +1,4 @@
-from .db_conn import conn, cur
+# from .db_conn import conn, cur
 sale_items_temp = []
 
 

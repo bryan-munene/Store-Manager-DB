@@ -8,16 +8,19 @@ from instance.config import app_config
 
 class DatabaseSetup(object):
     '''Sets up db connection'''
-
-    def __init__(self, url):
+    def __init__(self, config):
         '''initialize connection and cursor'''
-        self.conn = psycopg2.connect(url)
+        # print(app_config[config].SQL_DATABASE_URL)
+        print(config)
+        # print(app_config)
+        self.url = app_config[config].SQL_DATABASE_URL
+        self.conn = psycopg2.connect(self.url)
         self.cur = self.conn.cursor(
             cursor_factory=psycopg2.extras.RealDictCursor)
 
-    def create_tables(self, url):
+    def create_tables(self):
         '''creates tables by iterating through the list of queries'''
-        self.conn = psycopg2.connect(url)
+        self.conn = psycopg2.connect(self.url)
         self.cur = self.conn.cursor(
             cursor_factory=psycopg2.extras.RealDictCursor)
         queries = self.tables()
@@ -29,16 +32,16 @@ class DatabaseSetup(object):
                 self.conn.rollback()
             except psycopg2.InterfaceError as exc:
                 print(exc)
-                self.conn = psycopg2.connect(url)
+                self.conn = psycopg2.connect(self.url)
                 self.cur = self.conn.cursor(
                     cursor_factory=psycopg2.extras.RealDictCursor)
         self.conn.commit()
         self.cur.close()
         self.conn.close()
 
-    def drop_tables(self, url):
+    def drop_tables(self):
         '''drop tables by iterating through the list of queries'''
-        self.conn = psycopg2.connect(url)
+        self.conn = psycopg2.connect(self.url)
         self.cur = self.conn.cursor(
             cursor_factory=psycopg2.extras.RealDictCursor)
         queries = self.schema()
@@ -50,19 +53,19 @@ class DatabaseSetup(object):
                 self.conn.rollback()
             except psycopg2.InterfaceError as exc:
                 print(exc)
-                self.conn = psycopg2.connect(url)
+                self.conn = psycopg2.connect(self.url)
                 self.cur = self.conn.cursor(
                     cursor_factory=psycopg2.extras.RealDictCursor)
         self.conn.commit()
         self.cur.close()
         self.conn.close()
 
-    def create_default_admin_user(self, url):
+    def create_default_admin_user(self):
         '''creates the base user who is an admin user'''
-        self.conn = psycopg2.connect(url)
+        self.conn = psycopg2.connect(self.url)
         self.cur = self.conn.cursor(
             cursor_factory=psycopg2.extras.RealDictCursor)
-        admin = self.check_users(url)
+        admin = self.check_users()
         if not admin:
             password = 'Adm1n234'
             password_hash = generate_password_hash(password, method='sha256')
@@ -85,7 +88,7 @@ class DatabaseSetup(object):
                         cursor_factory=psycopg2.extras.RealDictCursor)
                 except BaseException:
                     self.conn.close()
-                    self.conn = psycopg2.connect(url)
+                    self.conn = psycopg2.connect(self.url)
                 self.cur = self.conn.cursor(
                     cursor_factory=psycopg2.extras.RealDictCursor)
 
@@ -95,9 +98,9 @@ class DatabaseSetup(object):
         else:
             return False
 
-    def check_users(self, url):
+    def check_users(self):
         '''checks if the admin user already exists'''
-        self.conn = psycopg2.connect(url)
+        self.conn = psycopg2.connect(self.url)
         self.cur = self.conn.cursor(
             cursor_factory=psycopg2.extras.RealDictCursor)
         query = """SELECT * FROM users WHERE email LIKE 'test@adminmail.com';"""

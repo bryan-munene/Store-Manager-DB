@@ -5,7 +5,7 @@ from flask_jwt_extended import (
     create_access_token,
     get_jwt_identity)
 import datetime
-from .db_conn import conn, cur
+from  import conn, cur
 
 
 class UserModel():
