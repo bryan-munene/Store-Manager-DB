@@ -10,9 +10,6 @@ class DatabaseSetup(object):
     '''Sets up db connection'''
     def __init__(self, config):
         '''initialize connection and cursor'''
-        # print(app_config[config].SQL_DATABASE_URL)
-        print(config)
-        # print(app_config)
         self.url = app_config[config].SQL_DATABASE_URL
         self.conn = psycopg2.connect(self.url)
         self.cur = self.conn.cursor(

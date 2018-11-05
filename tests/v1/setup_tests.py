@@ -83,9 +83,9 @@ class Store_Manager_Base(unittest.TestCase):
     def tearDown(self):
         '''This method clears all the data and records from the tests ran. It is ran at the end of the tests.'''
         with self.app_context:
-            self.db.drop_tables()
             self.app_context.pop()
-        
+        self.db.drop_tables()
+            
     def sign_up_user(self):
         '''
         this is a helper function for an ordinary user's registration
