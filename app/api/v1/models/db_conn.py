@@ -3,7 +3,7 @@ import psycopg2
 import psycopg2.extras
 from instance.config import app_config
 
-config = os.getenv('ENV', default='development')
+config = os.getenv('ENV', default='staging')
        
 class ModelSetup(object):
     '''Sets up db connection'''
