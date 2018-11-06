@@ -7,7 +7,7 @@ from app.api.v1.views.sales import sales_bp
 from app.api.v1.views.items import items_bp
 from app.api.v1.views.auth import users_bp
 from app.api.v1.views.categories import categories_bp
-blacklist = set()
+from app.api.v1.models.auth import BlacklistModel
 jwt = JWTManager()
 
 def create_app(config):
@@ -45,4 +45,5 @@ def create_app(config):
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
-    return jti in blacklist
+    blacklist_model = BlacklistModel()
+    return blacklist_model.blacklisted_token(jti)

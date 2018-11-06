@@ -1,8 +1,9 @@
-from .db_conn import conn, cur
+from .db_conn import ModelSetup
+
 sale_items_temp = []
 
 
-class SalesModel():
+class SalesModel(ModelSetup):
     '''Handles the data logic of the sales section'''
     def __init__(
             self,
@@ -52,7 +53,7 @@ class SalesModel():
         query = """INSERT INTO sale_items(sale_id, item_id, item_name, quantity, price, total, created_by)\
                 VALUES(%s,%s,%s,%s,%s,%s,%s);"""
 
-        cur.execute(
+        self.cur.execute(
             query,
             (sale_id,
              item_id,
@@ -61,11 +62,11 @@ class SalesModel():
              price,
              total,
              auth))
-        conn.commit()
+        self.conn.commit()
 
         query_confirm = """SELECT * FROM sale_items WHERE sale_id = %s;"""
-        cur.execute(query_confirm, (sale_id, ))
-        self.sale_items = cur.fetchall()
+        self.cur.execute(query_confirm, (sale_id, ))
+        self.sale_items = self.cur.fetchall()
 
         return self.sale_items
 
@@ -74,22 +75,22 @@ class SalesModel():
         query = """INSERT INTO sales(payment_mode, number_of_items, grand_total, created_by)\
                 VALUES(%s,%s,%s,%s);"""
 
-        cur.execute(query, (payment_mode, items, grand, auth))
-        conn.commit()
+        self.cur.execute(query, (payment_mode, items, grand, auth))
+        self.conn.commit()
 
         sale_id = self.last_sale_id()
 
         query_confirm = """SELECT * FROM sales WHERE sale_id = %s;"""
-        cur.execute(query_confirm, (sale_id, ))
-        self.sale = cur.fetchone()
+        self.cur.execute(query_confirm, (sale_id, ))
+        self.sale = self.cur.fetchone()
 
         return self.sale
 
     def last_sale_id(self):
         '''Retrieves the last added sale id'''
         query = """SELECT sale_id FROM sales ORDER BY sale_id DESC LIMIT 1;"""
-        cur.execute(query)
-        sale_id = cur.fetchone()
+        self.cur.execute(query)
+        sale_id = self.cur.fetchone()
         sale_id = sale_id['sale_id']
 
         return sale_id
@@ -97,39 +98,39 @@ class SalesModel():
     def get_all_sales(self):
         '''Retrieves all sales records'''
         query = """SELECT * FROM sales;"""
-        cur.execute(query)
-        self.sales = cur.fetchall()
+        self.cur.execute(query)
+        self.sales = self.cur.fetchall()
 
         return self.sales
 
     def get_all_sale_items(self):
         '''retrieves all sale items'''
         query = """SELECT * FROM sale_items;"""
-        cur.execute(query)
-        self.sale_items = cur.fetchall()
+        self.cur.execute(query)
+        self.sale_items = self.cur.fetchall()
 
         return self.sale_items
 
     def get_sale_items_by_sale_id(self, sale_id):
         '''retrieves all the sale items from a specific sale by referencing that sales sale id'''
         query = """SELECT * FROM sale_items WHERE sale_id = %s;"""
-        cur.execute(query, (sale_id, ))
-        self.sale_items = cur.fetchall()
+        self.cur.execute(query, (sale_id, ))
+        self.sale_items = self.cur.fetchall()
 
         return self.sale_items
 
     def get_sales_by_sale_id(self, sale_id):
         '''retrieves a sale by using it's sale id'''
         query = """SELECT * FROM sales WHERE sale_id = %s;"""
-        cur.execute(query, (sale_id, ))
-        self.sale = cur.fetchone()
+        self.cur.execute(query, (sale_id, ))
+        self.sale = self.cur.fetchone()
 
         return self.sale
 
     def get_sales_by_user_id(self, user_id):
         '''retrieves all the sales made by a specific user by referencing their user id'''
         query = """SELECT * FROM sales WHERE created_by = %s;"""
-        cur.execute(query, (user_id, ))
-        self.sales = cur.fetchall()
+        self.cur.execute(query, (user_id, ))
+        self.sales = self.cur.fetchall()
 
         return self.sales

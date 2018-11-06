@@ -6,15 +6,14 @@ from flask_jwt_extended import (
     get_jwt_identity,
     get_raw_jwt)
 import datetime
-from app import blacklist
 
-from ..models.auth import UserModel
+from ..models.auth import UserModel, BlacklistModel
 from ..utility.validators import login_checker, registration_checker, system_error_login, system_error_registration, update_checker, update_role_checker, system_error_update, system_error_update_role
 
 users_bp = Blueprint('users', __name__, url_prefix='/api/v2')
 
 user_model = UserModel()
-
+blacklist_model = BlacklistModel()
 
 class Users(object):
     '''Handles the application logic of the users part'''
@@ -128,7 +127,7 @@ class Users(object):
     def logout(*args, **kwargs):
         '''handles user logout. it is a protected route'''
         jti = get_raw_jwt()['jti']
-        blacklist.add(jti)
+        blacklist_model.blacklist_token(jti)
         return make_response(jsonify({
             "status": "logged out",
             "message": "User successfully logged out"
