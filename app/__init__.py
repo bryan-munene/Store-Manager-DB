@@ -1,5 +1,5 @@
 import os
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, jsonify
 from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from instance.config import app_config
 from manage import DatabaseSetup
@@ -18,6 +18,7 @@ def create_app(config):
     app.url_map.strict_slashes = False
     app.config.from_object(app_config[config])
     app.config.from_pyfile('config.py')
+    app.config.from_envvar('testing', silent=True)
     app.config['testing'] = True
     app.secret_key = os.getenv('SECRET_KEY')
     app.config['JWT_BLACKLIST_ENABLED'] = True
@@ -25,14 +26,18 @@ def create_app(config):
     jwt.init_app(app)
 
     db = DatabaseSetup(config)
-    
-    db.create_tables()
-    db.create_default_admin_user()
+    with app.app_context():
+        db.create_tables()
+        db.create_default_admin_user()
 
     app.register_blueprint(sales_bp)
     app.register_blueprint(items_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(categories_bp)
+
+    @app.route("/")
+    def index():
+        return jsonify(200, "WELCOME. You are here.")
 
 
     return app

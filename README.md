@@ -216,7 +216,7 @@ This app contains multiple versions.
 
 # Documentation
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/9ba372bda1827df5c860)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/b9518e79588f0fc7bbdf#?env%5BStore%20Manager%5D=W10=)
 
 [Store Manger API Documentation](https://documenter.getpostman.com/view/4618681/RzZ4ogck)
 
