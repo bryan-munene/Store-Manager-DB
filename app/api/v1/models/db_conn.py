@@ -3,9 +3,8 @@ import psycopg2
 import psycopg2.extras
 from instance.config import app_config
 
-config = os.getenv('ENV')
-print(config)
-        
+config = os.getenv('ENV', default='development')
+       
 class ModelSetup(object):
     '''Sets up db connection'''
     def __init__(self):
