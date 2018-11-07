@@ -13,6 +13,9 @@ categories_model = CategoriesModel()
 
 items_bp = Blueprint('items', __name__, url_prefix='/api/v2')
 
+@items_bp.route("/")
+def index():
+    return jsonify(200, "WELCOME. You are here.")
 
 
 class Items(object):

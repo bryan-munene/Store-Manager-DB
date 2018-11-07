@@ -35,11 +35,6 @@ def create_app(config):
     app.register_blueprint(users_bp)
     app.register_blueprint(categories_bp)
 
-    @app.route("/")
-    def index():
-        return jsonify(200, "WELCOME. You are here.")
-
-
     return app
 
 @jwt.token_in_blacklist_loader
