@@ -7,7 +7,7 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = os.getenv('SECRET')
     JWT_BLACKLIST_ENABLED = True
-    SQL_DATABASE_URL = os.getenv('DATABASE_URL')
+    SQL_DATABASE_URL = os.getenv('DATABASE_URL_LOCAL')
 
 
 class DevelopmentConfig(Config):
@@ -25,7 +25,7 @@ class TestingConfig(Config):
 class StagingConfig(Config):
     """Configurations for Staging."""
     DEBUG = True
-    SQL_DATABASE_URL = os.getenv('DATABASE_URL_STAGING')
+    SQL_DATABASE_URL = os.getenv('DATABASE_URL')
     
 
 class ProductionConfig(Config):
