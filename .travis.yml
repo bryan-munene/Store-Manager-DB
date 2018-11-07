@@ -1,12 +1,8 @@
 language: python
 env:
-  - FLASK_APP=run.py
-  - APP_SETTINGS=development
   - ENV=testing
-  - DATABASE_URL_LOCAL=host='localhost' port='5432' user='postgres' password='root' dbname='store_manager'
   - DATABASE_URL_TEST=host='localhost' user='postgres' password='root' dbname='store_manager_test'
   - SECRET_KEY=" \87b\0ha\j&^\*kd\fg4\ugy\8gq\4tt\0nj\bga\g$%\^&*\()d\l*7\*&^\&$%\bjd\bnj\bns\236\7$%\^&*\()i\nkn\fgs\dgj\n4k\*&6\%gb\hbj\fgh\}|{\POI\IUP\{O}\dhf\jhb\$%^\&*(\!@#\$@!\@#{\}{{\}:{\LMk\ "
-  - DATABASE_URL=postgres://qmnivgaqjcmbyo:a2bf5024bca1eda7e154e9a8b91ea40b9b2934232d2d33209e729b57e852eede@ec2-23-23-153-145.compute-1.amazonaws.com:5432/dcoe0n590r3h02
 python:
   - "3.6"
 services:
