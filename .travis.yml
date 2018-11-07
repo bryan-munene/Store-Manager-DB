@@ -1,6 +1,6 @@
 language: python
 env:
-  - FLASK_APP="run.py"
+  - FLASK_APP=run.py
   - APP_SETTINGS=development
   - ENV=testing
   - DATABASE_URL_LOCAL=host='localhost' port='5432' user='postgres' password='root' dbname='store_manager'
@@ -17,6 +17,7 @@ install:
   - pip install codeclimate-test-reporter
 before_script:
   - psql -c 'create database store_manager_test;' -U postgres
+  - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
 script:
   - coverage run --source=tests/v1 -m pytest && coverage report
 after_success:
