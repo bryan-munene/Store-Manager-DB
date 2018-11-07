@@ -1,5 +1,6 @@
 language: python
 env:
+  - APP_SETTINGS=development
   - ENV=testing
   - DATABASE_URL_TEST=host='localhost' user='postgres' password='root' dbname='store_manager_test'
   - SECRET_KEY=" \87b\0ha\j&^\*kd\fg4\ugy\8gq\4tt\0nj\bga\g$%\^&*\()d\l*7\*&^\&$%\bjd\bnj\bns\236\7$%\^&*\()i\nkn\fgs\dgj\n4k\*&6\%gb\hbj\fgh\}|{\POI\IUP\{O}\dhf\jhb\$%^\&*(\!@#\$@!\@#{\}{{\}:{\LMk\ "
@@ -12,7 +13,7 @@ install:
   - pip install coveralls codecov
   - pip install codeclimate-test-reporter
 before_script:
-  - psql -c 'create database store_manager_test;' -U postgres
+  - psql -c "create database store_manager_test;" -U postgres
   - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
 script:
   - coverage run --source=tests/v1 -m pytest && coverage report
