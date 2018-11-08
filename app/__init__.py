@@ -24,7 +24,8 @@ def create_app(config):
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config["JWT_SECRET_KEY"]= os.getenv('SECRET_KEY')
     jwt.init_app(app)
-
+    print(config)
+        
     db = DatabaseSetup(config)
     with app.app_context():
         db.create_tables()

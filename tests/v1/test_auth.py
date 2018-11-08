@@ -3,9 +3,8 @@ import unittest
 from flask import json
 
 from .setup_tests import Store_Manager_Base
-from .helpers_test import Helpers
+
 store_manager = Store_Manager_Base()
-helper = Helpers()
 
         
 #REGISTRATION INPUT FOR TESTS

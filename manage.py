@@ -11,6 +11,7 @@ class DatabaseSetup(object):
     def __init__(self, config):
         '''initialize connection and cursor'''
         self.url = app_config[config].SQL_DATABASE_URL
+        print(self.url)
         self.conn = psycopg2.connect(self.url)
         self.cur = self.conn.cursor(
             cursor_factory=psycopg2.extras.RealDictCursor)

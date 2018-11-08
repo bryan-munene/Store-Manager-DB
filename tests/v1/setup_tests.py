@@ -69,9 +69,8 @@ class Store_Manager_Base(unittest.TestCase):
     '''This class configures all the parameters needed for the tests and is inheritted by all other test classes.'''
     def setUp(self):
         '''This method sets up the necessary parameters such as the test client, test db and testing setting in the app'''
-        self.config = os.getenv('ENV')
-        self.app = create_app(self.config)
-        self.db = DatabaseSetup(self.config)
+        self.app = create_app('testing')
+        self.db = DatabaseSetup('testing')
         self.test_client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app.testing = True

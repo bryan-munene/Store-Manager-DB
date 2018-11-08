@@ -4,6 +4,7 @@ import psycopg2.extras
 from instance.config import app_config
 
 config = os.getenv('ENV')
+print(config)
        
 class ModelSetup(object):
     '''Sets up db connection'''
@@ -13,3 +14,4 @@ class ModelSetup(object):
         self.conn = psycopg2.connect(self.url)
         self.cur = self.conn.cursor(
             cursor_factory=psycopg2.extras.RealDictCursor)
+            
