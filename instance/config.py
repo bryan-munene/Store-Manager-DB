@@ -7,18 +7,17 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = os.getenv('SECRET')
     JWT_BLACKLIST_ENABLED = True
-    SQL_DATABASE_URL = os.getenv('DATABASE_URL_LOCAL')
-
+    
 
 class DevelopmentConfig(Config):
     """Configurations for Development."""
     DEBUG = True
-
+    SQL_DATABASE_URL = "dbname='store_manager' host='127.0.0.1' port='5432' user='postgres' password='root'"
 
 class TestingConfig(Config):
     """Configurations for Testing, with a separate test database."""
+    SQL_DATABASE_URL = "dbname='store_manager_test' host='127.0.0.1' port='5432' user='postgres' password='root'"
     TESTING = True
-    SQL_DATABASE_URL = os.getenv('DATABASE_URL_TEST')
     DEBUG = True
 
 
@@ -38,5 +37,7 @@ app_config = {
     "development": DevelopmentConfig,
     "testing": TestingConfig,
     "staging": StagingConfig,
-    "production": ProductionConfig
+    "production": ProductionConfig,
+    "DATABASE_URL_TEST": "dbname='store_manager_test' host='127.0.0.1' port='5432' user='postgres' password='root'",
+    "DATABASE_URL_LOCAL": "dbname='store_manager' host='127.0.0.1' port='5432' user='postgres' password='root'"
 }

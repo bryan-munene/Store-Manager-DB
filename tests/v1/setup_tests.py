@@ -71,11 +71,14 @@ class Store_Manager_Base(unittest.TestCase):
         '''This method sets up the necessary parameters such as the test client, test db and testing setting in the app'''
         self.app = create_app('testing')
         self.db = DatabaseSetup('testing')
+        self.app.config.from_envvar('testing', silent=True)
+        self.app.config['testing'] = True
         self.test_client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app.testing = True
 
         with self.app_context:
+            self.db.drop_tables()
             self.db.create_tables()
             self.db.create_default_admin_user()
             self.app_context.push()
