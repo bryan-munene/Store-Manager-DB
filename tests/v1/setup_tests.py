@@ -17,7 +17,7 @@ sample_user=[
             "password2":"pass"
             },
             {
-            "email":"test@mail.com",	
+            "email":"test_details@mail.com",	
             "password":"pass"
             },
             {
@@ -119,7 +119,6 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         self.app = create_app('testing')
         self.test_client = self.app.test_client()
-        self.sign_up_user()
         sign_in = self.test_client.post('/api/v2/login', data = json.dumps(sample_user[1]), content_type = 'application/json')
         data = json.loads(sign_in.data.decode('utf-8'))
         assert (sign_in.status_code == 200)

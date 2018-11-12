@@ -12,6 +12,19 @@ sample_sale=[{
             "payment_mode":"Cash",
             "sale_items": [
     	                    {
+    		                "item_id":"10",
+    		                "quantity":"1"
+    	                    },
+    	                    {
+    		                "item_id":"20",
+    		                "quantity":"1"
+    	                    }
+                           ]
+            },
+            {
+            "payment_mode":"Cash",
+            "sale_items": [
+    	                    {
     		                "item_id":"1",
     		                "quantity":"abc"
     	                    },
@@ -108,19 +121,14 @@ sample_sale=[{
 
 '''-------------------------------------------------------------------------------------------------------------------------------'''
 class Test_Sales(Store_Manager_Base):
-
+    
+    Store_Manager_Base().sign_up_user()
+    Store_Manager_Base().add_items_helper()
+        
     #SALES
     
     #GET ALL SALES TESTS
 
-
-    def test_sales_retrive_all_no_sale(self):
-        self.token = self.sign_in_admin()
-        response = self.test_client.get('/api/v2/sales',content_type='application/json', headers=dict(Authorization=self.token))
-        msg = json.loads(response.data.decode('utf-8'))
-        assert(msg['status'] == "not found")
-        assert(response.status_code==404)
-        
 
     def test_sales_retrive_all_successfully(self):
         self.token = self.sign_in_admin()
@@ -134,15 +142,14 @@ class Test_Sales(Store_Manager_Base):
     #MAKE A SALE TESTS
 
 
-    def test_sales_quantity_not_digit(self):
+    def test_sales_item_not_present(self):
         self.token = self.sign_in_user()
         response = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[0]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
-        assert(msg['status'] == "not acceptable")
-        assert(response.status_code==406)
-        
-
-    def test_sales_item_id_not_digit(self):
+        assert(msg['status'] == "not found")
+        assert(response.status_code==404)
+    
+    def test_sales_quantity_not_digit(self):
         self.token = self.sign_in_user()
         response = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[1]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
@@ -150,7 +157,7 @@ class Test_Sales(Store_Manager_Base):
         assert(response.status_code==406)
         
 
-    def test_sales_item_id_empty(self):
+    def test_sales_item_id_not_digit(self):
         self.token = self.sign_in_user()
         response = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[2]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
@@ -158,15 +165,15 @@ class Test_Sales(Store_Manager_Base):
         assert(response.status_code==406)
         
 
-    def test_sales_quantity_empty(self):
+    def test_sales_item_id_empty(self):
         self.token = self.sign_in_user()
         response = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[3]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "not acceptable")
         assert(response.status_code==406)
+        
 
-
-    def test_sales_quantity_more_than_available_stock(self):
+    def test_sales_quantity_empty(self):
         self.token = self.sign_in_user()
         response = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[4]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
@@ -174,15 +181,15 @@ class Test_Sales(Store_Manager_Base):
         assert(response.status_code==406)
 
 
-    def test_sales_payment_method_empty(self):
+    def test_sales_quantity_more_than_available_stock(self):
         self.token = self.sign_in_user()
         response = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[5]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "not acceptable")
         assert(response.status_code==406)
-        
 
-    def test_sales_sale_items_empty(self):
+
+    def test_sales_payment_method_empty(self):
         self.token = self.sign_in_user()
         response = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[6]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
@@ -190,9 +197,17 @@ class Test_Sales(Store_Manager_Base):
         assert(response.status_code==406)
         
 
-    def test_place_sale_successfully(self):
+    def test_sales_sale_items_empty(self):
         self.token = self.sign_in_user()
         response = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[7]) ,content_type='application/json', headers=dict(Authorization=self.token))
+        msg = json.loads(response.data.decode('utf-8'))
+        assert(msg['status'] == "not acceptable")
+        assert(response.status_code==406)
+        
+
+    def test_place_sale_successfully(self):
+        self.token = self.sign_in_user()
+        response = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[8]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "created")
         assert(response.status_code==201)
@@ -217,6 +232,7 @@ class Test_Sales(Store_Manager_Base):
         assert(response.status_code == 404)
 
     def test_get_sale_successfully(self):
+        self.make_sale_helper()
         self.token = self.sign_in_admin()
         response = self.test_client.get('/api/v2/sales/1' ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
