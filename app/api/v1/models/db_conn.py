@@ -1,9 +1,14 @@
 import os
-from instance.config import app_config
 from manage import DatabaseSetup
 
-url = os.getenv('DATABASE_URL')
-db = DatabaseSetup(url)
+config = os.getenv('ENV')
 
-conn = db.conn
-cur = db.cur
+
+       
+class ModelSetup(object):
+    '''Sets up db connection'''
+    def __init__(self):
+        '''initialize connection and cursor'''
+        self.db = DatabaseSetup(config)
+        self.conn = self.db.conn
+        self.cur = self.db.cur

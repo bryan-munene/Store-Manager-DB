@@ -1,0 +1,23 @@
+language: python
+python:
+  - "3.6"
+cache: 
+    - pip
+before_install:
+ - 'pip install -U pip'
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls codecov
+  - pip install codeclimate-test-reporter
+env:
+  - ENV="testing"
+services:
+  - postgresql
+before_script:
+  - psql -c "create database store_manager_test;" -U postgres
+  - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
+script:
+  - coverage run --source=tests/v1 -m pytest && coverage report
+after_success:
+  - coveralls
+  - codeclimate-test-reporter

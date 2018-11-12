@@ -5,26 +5,27 @@ class Config(object):
     """Parent configuration class."""
     DEBUG = False
     CSRF_ENABLED = True
-    SECRET_KEY = os.getenv('SECRET')
-    SQL_DATABASE_URI = os.getenv('DATABASE_URL')
-
+    SECRET_KEY = " sdrftgyhunjkl234567890feyfwiujokpsijegrpkojkhgcfxdghjbkfrsfhngbfv "
+    JWT_BLACKLIST_ENABLED = True
+    
 
 class DevelopmentConfig(Config):
     """Configurations for Development."""
     DEBUG = True
-
+    SQL_DATABASE_URL = "dbname='store_manager' host='127.0.0.1' port='5432' user='postgres' password='root'"
 
 class TestingConfig(Config):
     """Configurations for Testing, with a separate test database."""
+    SQL_DATABASE_URL = "dbname='store_manager_test' host='127.0.0.1' port='5432' user='postgres' password='root'"
     TESTING = True
-    SQL_DATABASE_URI = 'postgresql://localhost/test_db'
     DEBUG = True
 
 
 class StagingConfig(Config):
     """Configurations for Staging."""
     DEBUG = True
-
+    SQL_DATABASE_URL = os.getenv('DATABASE_URL')
+    
 
 class ProductionConfig(Config):
     """Configurations for Production."""
@@ -33,8 +34,8 @@ class ProductionConfig(Config):
 
 
 app_config = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'staging': StagingConfig,
-    'production': ProductionConfig
+    "development": DevelopmentConfig,
+    "testing": TestingConfig,
+    "staging": StagingConfig,
+    "production": ProductionConfig
 }
