@@ -67,7 +67,7 @@ class DatabaseSetup(object):
         admin = self.check_users()
         if not admin:
             password = 'Adm1n234'
-            password_hash = generate_password_hash(password, method='sha256')
+            password_hash = generate_password_hash(password)
             query = """INSERT INTO users(name, username, email, password, is_admin)\
                     VALUES(%s,%s,%s,%s,%s);"""
 
