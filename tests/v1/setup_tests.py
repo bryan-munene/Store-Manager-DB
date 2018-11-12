@@ -3,6 +3,7 @@ import os
 from flask import json
 from app import create_app
 from instance.config import app_config
+from manage import DatabaseSetup
 
 
 
@@ -67,15 +68,17 @@ sample_sale = [{
 
 class Store_Manager_Base(unittest.TestCase):
     '''This class configures all the parameters needed for the tests and is inheritted by all other test classes.'''
+    db = DatabaseSetup()
+    db.drop_tables()
+
     def setUp(self):
         '''This method sets up the necessary parameters such as the test client, test db and testing setting in the app'''
         self.app = create_app('testing')
         self.test_client = self.app.test_client()
         self.app_context = self.app.app_context()
-        
         with self.app_context:
             self.app_context.push()
-            
+             
     def tearDown(self):
         '''This method clears all the data and records from the tests ran. It is ran at the end of the tests.'''
         with self.app_context:
@@ -86,6 +89,8 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         this is a helper function for an ordinary user's registration
         '''
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
         self.token = self.sign_in_admin()
         sign_up = self.test_client.post('/api/v2/register', data = json.dumps(sample_user[0]), content_type = 'application/json', headers=dict(Authorization=self.token))
         assert (sign_up.status_code == 201)
@@ -94,6 +99,8 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         this is a helper function for an ordinary user's login
         '''
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
         self.sign_up_user()
         sign_in = self.test_client.post('/api/v2/login', data = json.dumps(sample_user[1]), content_type = 'application/json')
         data = json.loads(sign_in.data.decode('utf-8'))
@@ -105,6 +112,8 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         this is a helper function for an admin user's login
         '''
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
         sign_in = self.test_client.post('/api/v2/login', data = json.dumps(sample_user[2]), content_type = 'application/json')
         data = json.loads(sign_in.data.decode('utf-8'))
         assert (sign_in.status_code == 200)
@@ -115,6 +124,8 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         this is a helper function for adding categories
         '''
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
         self.token = self.sign_in_admin()
         add_category = self.test_client.post('/api/v2/add_category', data=json.dumps(sample_category[0]) ,content_type='application/json', headers=dict(Authorization=self.token))
         assert(add_category.status_code==201)
@@ -123,6 +134,8 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         this is a helper function for adding items
         '''
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
         self.token = self.sign_in_admin()
         self.add_category_helper()
         add_item = self.test_client.post('/api/v2/add_item', data=json.dumps(sample_item[0]) ,content_type='application/json', headers=dict(Authorization=self.token))
@@ -134,6 +147,8 @@ class Store_Manager_Base(unittest.TestCase):
         '''
         this is a helper function to make a sale
         '''
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
         self.token = self.sign_in_user()
         sell = self.test_client.post('/api/v2/make_sale', data=json.dumps(sample_sale[0]) ,content_type='application/json', headers=dict(Authorization=self.token))
         assert(sell.status_code==201)

@@ -208,7 +208,7 @@ class BlacklistModel(ModelSetup):
         model = ModelSetup()
         self.conn = model.conn
         self.cur = model.cur
-        query = """INSERT INTO blacklist_token (token) VALUES %s;"""
+        query = """INSERT INTO blacklist_token (token) VALUES (%s);"""
         self.cur.execute(query, (jti, ))
         self.conn.commit()
 

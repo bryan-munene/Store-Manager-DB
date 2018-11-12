@@ -259,13 +259,6 @@ class Test_Users(Store_Manager_Base):
 
     #EMAIL FORMAT CHECKS
 
-    def test_register_wrong_email_format(self):
-        self.token = store_manager.sign_in_admin()
-        register = self.test_client.post('/api/v2/register', data = json.dumps(sample_registration[5]), content_type = 'application/json', headers=dict(Authorization=self.token))
-        response = json.loads(register.data.decode('utf-8'))
-        assert(response['status'] == "not acceptable")
-        assert(register.status_code == 406)
-
     def test_register_wrong_email_format1(self):
         self.token = store_manager.sign_in_admin()
         register = self.test_client.post('/api/v2/register', data = json.dumps(sample_registration[6]), content_type = 'application/json', headers=dict(Authorization=self.token))
@@ -403,7 +396,6 @@ class Test_Users(Store_Manager_Base):
 
     def test_users_update_user_empty_name(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.sign_up_user()
         update= self.test_client.put('/api/v2/users/2', data = json.dumps(sample_update[0]), content_type='application/json', headers=dict(Authorization=self.token))
         response = json.loads(update.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
@@ -411,7 +403,6 @@ class Test_Users(Store_Manager_Base):
     
     def test_users_update_user_empty_username(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.sign_up_user()
         update= self.test_client.put('/api/v2/users/2', data = json.dumps(sample_update[1]), content_type='application/json', headers=dict(Authorization=self.token))
         response = json.loads(update.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
@@ -419,7 +410,6 @@ class Test_Users(Store_Manager_Base):
     
     def test_users_update_user_empty_password(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.sign_up_user()
         update= self.test_client.put('/api/v2/users/2', data = json.dumps(sample_update[2]), content_type='application/json', headers=dict(Authorization=self.token))
         response = json.loads(update.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
@@ -427,7 +417,6 @@ class Test_Users(Store_Manager_Base):
 
     def test_users_update_user_empty_password2(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.sign_up_user()
         update= self.test_client.put('/api/v2/users/2', data = json.dumps(sample_update[3]), content_type='application/json', headers=dict(Authorization=self.token))
         response = json.loads(update.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
@@ -435,7 +424,6 @@ class Test_Users(Store_Manager_Base):
 
     def test_users_update_user_password_match(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.sign_up_user()
         update= self.test_client.put('/api/v2/users/2', data = json.dumps(sample_update[4]), content_type='application/json', headers=dict(Authorization=self.token))
         response = json.loads(update.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
@@ -443,7 +431,6 @@ class Test_Users(Store_Manager_Base):
 
     def test_users_update_user_password_match2(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.sign_up_user()
         update= self.test_client.put('/api/v2/users/2', data = json.dumps(sample_update[5]), content_type='application/json', headers=dict(Authorization=self.token))
         response = json.loads(update.data.decode('utf-8'))
         assert(response['status'] == "not acceptable")
@@ -451,11 +438,10 @@ class Test_Users(Store_Manager_Base):
 
     def test_users_update_user_successfully(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.sign_up_user()
         update= self.test_client.put('/api/v2/users/2', data = json.dumps(sample_update[6]), content_type='application/json', headers=dict(Authorization=self.token))
         response = json.loads(update.data.decode('utf-8'))
-        assert(response['status'] == "ok")
-        assert(update.status_code==200)
+        assert(response['status'] == "created")
+        assert(update.status_code==201)
 
     '''-------------------------------------------------------------------------------------------------------------------------------'''
 

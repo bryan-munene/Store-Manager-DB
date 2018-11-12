@@ -23,17 +23,10 @@ def create_app(config):
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config["JWT_SECRET_KEY"]= os.getenv('SECRET_KEY')
     jwt.init_app(app)
-    print(config)
         
     db = DatabaseSetup()
-    if config == 'testing':
-        db.drop_tables()
-        db.create_tables()
-        db.create_default_admin_user()
-
-    else:
-        db.create_tables()
-        db.create_default_admin_user()
+    db.create_tables()
+    db.create_default_admin_user()
 
 
     app.register_blueprint(sales_bp)

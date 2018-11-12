@@ -93,16 +93,16 @@ class Users(object):
             count = sales_model.count_sales_by_user_id(user_id)
             return make_response(jsonify({
                 "status": "Logged in",
-                "sales": count,
-                "latest": last
+                "count": count,
+                "sales": last
                 }), 200)
 
         last = sales_model.get_sales_last_five()
         count = sales_model.count_sales()
         return make_response(jsonify({
-            "status": "Logged in",
-            "sales": count,
-            "latest": last
+            "status": "Logged in admin",
+            "count": count,
+            "sales": last
             }), 200)
         
 

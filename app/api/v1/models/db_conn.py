@@ -3,7 +3,7 @@ from manage import DatabaseSetup
 
 
        
-class ModelSetup(DatabaseSetup):
+class ModelSetup(object):
     '''Sets up db connection'''
     def __init__(self):
         '''initialize connection and cursor'''

@@ -15,7 +15,6 @@ class DatabaseSetup(object):
     def __init__(self):
         '''initialize connection and cursor'''
         self.url = app_config[config].SQL_DATABASE_URL
-        print(self.url)
         self.conn = psycopg2.connect(self.url)
         self.cur = self.conn.cursor(
             cursor_factory=psycopg2.extras.RealDictCursor)
@@ -115,8 +114,8 @@ class DatabaseSetup(object):
         '''creates queries for creation of tables'''
         query1 = """CREATE TABLE IF NOT EXISTS users (
             user_id serial PRIMARY KEY NOT NULL,
-            name varchar(20) NOT NULL,
-            username varchar(20) NOT NULL,
+            name varchar(50) NOT NULL,
+            username varchar(50) NOT NULL,
             email varchar(100) NOT NULL,
             password varchar(300) NOT NULL,
             is_admin varchar(20) NOT NULL,
@@ -167,7 +166,7 @@ class DatabaseSetup(object):
 
         query6 = """CREATE TABLE IF NOT EXISTS blacklist_token (
             token_id serial PRIMARY KEY NOT NULL,
-            token varchar(20) NOT NULL)
+            token varchar(500) NOT NULL)
             """
 
         queries = [query1, query2, query3, query4, query5, query6]
