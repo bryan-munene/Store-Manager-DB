@@ -17,18 +17,24 @@ def create_app(config):
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
     app.url_map.strict_slashes = False
+    app.config['testing'] = True        
     app.config.from_object(app_config[config])
-    app.config.from_pyfile('config.py')
     app.secret_key = os.getenv('SECRET_KEY')
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config["JWT_SECRET_KEY"]= os.getenv('SECRET_KEY')
     jwt.init_app(app)
     print(config)
         
-    db = DatabaseSetup(config)
-    with app.app_context():
+    db = DatabaseSetup()
+    if config == 'testing':
+        db.drop_tables()
         db.create_tables()
         db.create_default_admin_user()
+
+    else:
+        db.create_tables()
+        db.create_default_admin_user()
+
 
     app.register_blueprint(sales_bp)
     app.register_blueprint(items_bp)

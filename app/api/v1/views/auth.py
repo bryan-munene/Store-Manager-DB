@@ -8,11 +8,13 @@ from flask_jwt_extended import (
 import datetime
 
 from ..models.auth import UserModel, BlacklistModel
+from app.api.v1.models.sales import SalesModel
 from ..utility.validators import login_checker, registration_checker, system_error_login, system_error_registration, update_checker, update_role_checker, system_error_update, system_error_update_role
 
 users_bp = Blueprint('users', __name__, url_prefix='/api/v2')
 
 user_model = UserModel()
+sales_model = SalesModel()
 blacklist_model = BlacklistModel()
 
 class Users(object):
@@ -57,11 +59,14 @@ class Users(object):
 
         credentials = user_model.access_token(email, password)
         username = user_model.get_user_username_by_email(email)
+        role = user_model.get_user_role_by_email(email)
+        
         if credentials:
             return make_response(jsonify({
                 "status": "user logged in",
                 "username": username,
                 "login": True,
+                "role": role,
                 "token": credentials
             }), 200)
         return make_response(jsonify({
@@ -69,6 +74,37 @@ class Users(object):
             "message": "Credentials do not match",
             "login": False
         }), 401)
+
+    @users_bp.route("/dashboard", methods=["GET"])
+    @jwt_required
+    def dashboard(*args, **kwargs):
+        '''handles the dashboard of all users and is a protected route'''
+        auth_user = get_jwt_identity()
+        if not auth_user:
+            return make_response(jsonify({
+                "status": "unauthorised",
+                "message": "User must be logged in"
+            }), 401)
+
+        auth_user_role = auth_user['is_admin']
+        if auth_user_role == 'false':
+            user_id = auth_user['user_id']
+            last = sales_model.get_sales_by_user_id_last_five(user_id)
+            count = sales_model.count_sales_by_user_id(user_id)
+            return make_response(jsonify({
+                "status": "Logged in",
+                "sales": count,
+                "latest": last
+                }), 200)
+
+        last = sales_model.get_sales_last_five()
+        count = sales_model.count_sales()
+        return make_response(jsonify({
+            "status": "Logged in",
+            "sales": count,
+            "latest": last
+            }), 200)
+        
 
     @users_bp.route("/register", methods=["POST"])
     @jwt_required
@@ -121,6 +157,7 @@ class Users(object):
                 "status": "created",
                 "user": user
             }), 201)
+
 
     @users_bp.route("/logout", methods=["DELETE"])
     @jwt_required

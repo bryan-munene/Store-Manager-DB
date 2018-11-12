@@ -134,3 +134,38 @@ class SalesModel(ModelSetup):
         self.sales = self.cur.fetchall()
 
         return self.sales
+
+
+    def get_sales_by_user_id_last_five(self, user_id):
+        '''retrieves all the last 5 sales made by a specific user by referencing their user id'''
+        query = """SELECT * FROM sales WHERE created_by = %s ORDER BY sale_id DESC LIMIT 5;"""
+        self.cur.execute(query, (user_id, ))
+        self.sales = self.cur.fetchall()
+
+        return self.sales
+
+
+    def get_sales_last_five(self):
+        '''retrieves the last 5 sales'''
+        query = """SELECT * FROM sales ORDER BY sale_id DESC LIMIT 5;"""
+        self.cur.execute(query)
+        self.sales = self.cur.fetchall()
+
+        return self.sales
+
+
+    def count_sales_by_user_id(self, user_id):
+        '''counts all the sales made by a specific user by referencing their user id'''
+        query = """SELECT COUNT(*) FROM sales WHERE created_by = %s ORDER BY sale_id DESC LIMIT 5;"""
+        self.cur.execute(query, (user_id, ))
+        self.sales = self.cur.fetchall()
+
+        return self.sales
+
+    def count_sales(self):
+        '''counts all the sales'''
+        query = """SELECT COUNT(*) FROM sales ORDER BY sale_id DESC LIMIT 5;"""
+        self.cur.execute(query)
+        self.sales = self.cur.fetchall()
+
+        return self.sales

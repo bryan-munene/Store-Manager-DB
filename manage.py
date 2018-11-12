@@ -1,14 +1,18 @@
 import os
 import psycopg2
 import psycopg2.extras
+import urllib
+from urllib.parse import urlparse
 from flask import Flask
 from werkzeug.security import generate_password_hash
 from instance.config import app_config
 
 
+config = os.getenv('ENV')
+
 class DatabaseSetup(object):
     '''Sets up db connection'''
-    def __init__(self, config):
+    def __init__(self):
         '''initialize connection and cursor'''
         self.url = app_config[config].SQL_DATABASE_URL
         print(self.url)
@@ -36,7 +40,7 @@ class DatabaseSetup(object):
         self.conn.commit()
         self.cur.close()
         self.conn.close()
-
+    
     def drop_tables(self):
         '''drop tables by iterating through the list of queries'''
         self.conn = psycopg2.connect(self.url)
