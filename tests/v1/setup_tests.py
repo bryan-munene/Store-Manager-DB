@@ -47,7 +47,8 @@ sample_item = [
 ]
 
 sample_category = [
-    {"name":"painkillers", "description":"alleviates pain"}
+    {"name":"painkillers3", "description":"alleviates pain"},
+    {"name":"painkillers4", "description":"alleviates pain"}
 ]
 
 sample_sale = [{
@@ -81,8 +82,7 @@ class Store_Manager_Base(unittest.TestCase):
              
     def tearDown(self):
         '''This method clears all the data and records from the tests ran. It is ran at the end of the tests.'''
-        with self.app_context:
-            self.app_context.pop()
+        self.app_context.pop()
         
             
     def sign_up_user(self):
@@ -128,6 +128,8 @@ class Store_Manager_Base(unittest.TestCase):
         self.test_client = self.app.test_client()
         self.token = self.sign_in_admin()
         add_category = self.test_client.post('/api/v2/add_category', data=json.dumps(sample_category[0]) ,content_type='application/json', headers=dict(Authorization=self.token))
+        assert(add_category.status_code==201)
+        add_category = self.test_client.post('/api/v2/add_category', data=json.dumps(sample_category[1]) ,content_type='application/json', headers=dict(Authorization=self.token))
         assert(add_category.status_code==201)
         
     def add_items_helper(self):
