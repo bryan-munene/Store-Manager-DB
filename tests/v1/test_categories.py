@@ -136,14 +136,7 @@ class Test_Categories(Store_Manager_Base):
         assert(msg['status'] == "not found")
         assert(response.status_code == 404)
 
-    def test_delete_category_successfully(self):
-        self.token = store_manager.sign_in_admin()
-        store_manager.add_category_helper()
-        response= self.test_client.delete('/api/v2/categories/1' ,content_type='application/json', headers=dict(Authorization=self.token))
-        msg = json.loads(response.data.decode('utf-8'))
-        assert(msg['status'] == "ok")
-        assert(response.status_code == 200)
-
+   
     '''-------------------------------------------------------------------------------------------------------------------------------'''
 
     #UPDATE CATEGORY
