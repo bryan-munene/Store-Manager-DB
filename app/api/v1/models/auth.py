@@ -31,7 +31,7 @@ class UserModel(ModelSetup):
         model = ModelSetup()
         self.conn = model.conn
         self.cur = model.cur
-        self.password = generate_password_hash(pswrd)
+        self.password = generate_password_hash(pswrd, method='sha256')
         query = """INSERT INTO users(name, username, email, password, is_admin)\
                 VALUES(%s,%s,%s,%s,%s);"""
 
@@ -129,7 +129,7 @@ class UserModel(ModelSetup):
         model = ModelSetup()
         self.conn = model.conn
         self.cur = model.cur
-        self.password = generate_password_hash(pswrd)
+        self.password = generate_password_hash(pswrd, method='sha256')
         query = """UPDATE users
                   SET name = %s, username = %s, password = %s
                   WHERE user_id = %s;
