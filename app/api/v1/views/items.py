@@ -145,19 +145,8 @@ class Items(object):
                 }), 406)
 
             data = request.get_json()
-            price = data['price']
-            image = data['image']
-            quantity = data['quantity']
-            reorder_point = data['reorder_point']
-            category_id = data['category_id']
-            auth = auth_user['user_id']
-
-            category = categories_model.get_by_id(category_id)
-            if not category:
-                return make_response(jsonify({
-                    "status": "not found",
-                    "message": "category does not esxist"
-                }), 404)
+            if data:                
+                auth = auth_user['user_id']
 
             item = items_model.get_by_id(item_id)
             if not item:
@@ -167,13 +156,37 @@ class Items(object):
                         "message": "item does not exist"
                     }), 404)
 
-            else:
-                item = items_model.update_item(
-                    item_id, price, quantity, image, category_id, reorder_point, auth)
-                return make_response(jsonify({
-                    "status": "created",
-                    "item": item
-                }), 201)
+            if data['price']:
+                item['price'] = data['price']
+            if data['image']:
+                item['image'] = data['image']
+            if data['quantity']:
+                item['quantity'] = data['quantity']
+            if data['reorder_point']:
+                item['reorder_point'] = data['reorder_point']
+            if data['category_id']:
+                category = categories_model.get_by_id(data['category_id'])
+                if not category:
+                    return make_response(jsonify({
+                        "status": "not found",
+                        "message": "category does not esxist"
+                    }), 404)
+                item['category_id'] = data['category_id']
+
+
+            price = item['price']
+            quantity = item['quantity']
+            image = item['image']
+            category_id = item['category_id']
+            reorder_point = item['reorder_point']
+
+
+            item = items_model.update_item(
+                item_id, price, quantity, image, category_id, reorder_point, auth)
+            return make_response(jsonify({
+                "status": "created",
+                "item": item
+            }), 201)
 
         elif request.method == 'DELETE':
             '''handles the deletion'''
