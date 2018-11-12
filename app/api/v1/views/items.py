@@ -190,7 +190,13 @@ class Items(object):
                     "status": "unauthorised",
                     "message": "Admin User must be logged in"
                 }), 401)
-
+            item = items_model.get_by_id(item_id)
+            if not item:
+                return make_response(
+                    jsonify({
+                        "status": "not found",
+                        "message": "item does not exist"
+                    }), 404)
             items = items_model.delete_item(item_id)
             if items:
                 return make_response(

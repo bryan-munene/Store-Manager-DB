@@ -29,7 +29,7 @@ sample_user=[
 
 sample_item = [
     {
-	"name":"Panadol", 
+	"name":"Panadolss", 
 	"price":"220",	
 	"image":"image", 
 	"quantity":"12", 
@@ -37,7 +37,7 @@ sample_item = [
 	"category_id":"1"
     },
     {
-	"name":"Amoxil", 
+	"name":"Amoxilsss", 
 	"price":"200",	
 	"image":"image", 
 	"quantity":"12", 
@@ -67,6 +67,10 @@ sample_category = [
     {"name":"painkillers4", "description":"alleviates pain"},
     {"name":"painkillers5", "description":"alleviates pain"},
     {"name":"painkillers6", "description":"alleviates pain"}
+]
+
+sample_category_helper = [
+    {"name":"painkillers111", "description":"alleviates pain"}
 ]
 
 sample_sale = [{
@@ -152,7 +156,17 @@ class Store_Manager_Base(unittest.TestCase):
         assert(add_category.status_code==201)
         add_category = self.test_client.post('/api/v2/add_category', data=json.dumps(sample_category[3]) ,content_type='application/json', headers=dict(Authorization=self.token))
         assert(add_category.status_code==201)
-        
+
+    def add_category_helper_1(self):
+        '''
+        this is a helper function for adding categories
+        '''
+        self.app = create_app('testing')
+        self.test_client = self.app.test_client()
+        self.token = self.sign_in_admin()
+        add_category = self.test_client.post('/api/v2/add_category', data=json.dumps(sample_category_helper[0]) ,content_type='application/json', headers=dict(Authorization=self.token))
+        assert(add_category.status_code==201)
+         
     def add_items_helper(self):
         '''
         this is a helper function for adding items

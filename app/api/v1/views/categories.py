@@ -162,6 +162,12 @@ class Categories(object):
                     "message": "Admin User must be logged in"
                 }), 401)
 
+            category = categories_model.get_by_id(category_id)
+            if not category:
+                return make_response(jsonify({
+                    "status": "not found",
+                    "message": "category does not exist"
+                }), 404)
             categories = categories_model.delete_category(category_id)
             if categories:
                 return make_response(

@@ -468,7 +468,6 @@ class Test_Users(Store_Manager_Base):
 
     def test_users_delete_user_successfully(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.sign_up_user()
         delete= self.test_client.delete('/api/v2/users/2',content_type='application/json', headers=dict(Authorization=self.token))
         response = json.loads(delete.data.decode('utf-8'))
         assert(response['status'] == "ok")
