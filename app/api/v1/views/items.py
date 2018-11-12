@@ -163,9 +163,9 @@ class Items(object):
             if not item:
                 return make_response(
                     jsonify({
-                        "status": "forbidden",
+                        "status": "not found",
                         "message": "item does not exist"
-                    }), 403)
+                    }), 404)
 
             else:
                 item = items_model.update_item(

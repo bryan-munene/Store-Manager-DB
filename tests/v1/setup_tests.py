@@ -43,12 +43,30 @@ sample_item = [
 	"quantity":"12", 
 	"reorder_point":"3", 
 	"category_id":"1"
+    },
+    {
+	"name":"items", 
+	"price":"220",	
+	"image":"image", 
+	"quantity":"12", 
+	"reorder_point":"3", 
+	"category_id":"1"
+    },
+    {
+	"name":"item", 
+	"price":"200",	
+	"image":"image", 
+	"quantity":"12", 
+	"reorder_point":"3", 
+	"category_id":"1"
     }
 ]
 
 sample_category = [
     {"name":"painkillers3", "description":"alleviates pain"},
-    {"name":"painkillers4", "description":"alleviates pain"}
+    {"name":"painkillers4", "description":"alleviates pain"},
+    {"name":"painkillers5", "description":"alleviates pain"},
+    {"name":"painkillers6", "description":"alleviates pain"}
 ]
 
 sample_sale = [{
@@ -131,6 +149,10 @@ class Store_Manager_Base(unittest.TestCase):
         assert(add_category.status_code==201)
         add_category = self.test_client.post('/api/v2/add_category', data=json.dumps(sample_category[1]) ,content_type='application/json', headers=dict(Authorization=self.token))
         assert(add_category.status_code==201)
+        add_category = self.test_client.post('/api/v2/add_category', data=json.dumps(sample_category[2]) ,content_type='application/json', headers=dict(Authorization=self.token))
+        assert(add_category.status_code==201)
+        add_category = self.test_client.post('/api/v2/add_category', data=json.dumps(sample_category[3]) ,content_type='application/json', headers=dict(Authorization=self.token))
+        assert(add_category.status_code==201)
         
     def add_items_helper(self):
         '''
@@ -143,6 +165,10 @@ class Store_Manager_Base(unittest.TestCase):
         add_item = self.test_client.post('/api/v2/add_item', data=json.dumps(sample_item[0]) ,content_type='application/json', headers=dict(Authorization=self.token))
         assert(add_item.status_code==201)
         add_item = self.test_client.post('/api/v2/add_item', data=json.dumps(sample_item[1]) ,content_type='application/json', headers=dict(Authorization=self.token))
+        assert(add_item.status_code==201)
+        add_item = self.test_client.post('/api/v2/add_item', data=json.dumps(sample_item[2]) ,content_type='application/json', headers=dict(Authorization=self.token))
+        assert(add_item.status_code==201)
+        add_item = self.test_client.post('/api/v2/add_item', data=json.dumps(sample_item[3]) ,content_type='application/json', headers=dict(Authorization=self.token))
         assert(add_item.status_code==201)
         
     def make_sale_helper(self):

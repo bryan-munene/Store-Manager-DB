@@ -80,7 +80,7 @@ sample_item = [
 	"category_id":"10"
     },
     {
-	"name":"Panadol", 
+	"name":"Panadols", 
 	"price":"220",	
 	"image":"image", 
 	"quantity":"12", 
@@ -98,11 +98,11 @@ sample_item_updates=[
     {"name":"Panadol", "price":"300",	"image":"image1", "quantity":"abc", "reorder_point":"3", "category_id":"1"},
     {"name":"Panadol", "price":"300",	"image":"image1", "quantity":"-15", "reorder_point":"3", "category_id":"1"},
     {"name":"", "price":"",	"image":"", "quantity":"","reorder_point":"", "category_id":""},
-    {"name":"Panadol", "price":"300",	"image":"image", "quantity":"12", "reorder_point":"3", "category_id":"1"},
+    {"name":"Panadol2", "price":"300",	"image":"image", "quantity":"12", "reorder_point":"3", "category_id":"1"},
     {"name":"Panadol Advance", "price":"200",	"image":"image", "quantity":"12", "reorder_point":"3", "category_id":"1"},
-    {"name":"Panadol", "price":"200",	"image":"image", "quantity":"15", "reorder_point":"3", "category_id":"1"},
-    {"name":"Panadol", "price":"200",	"image":"image1", "quantity":"12", "reorder_point":"3", "category_id":"1"},
-    {"name":"Panadol Advance", "price":"300",	"image":"image1", "quantity":"15", "reorder_point":"3", "category_id":"1"}
+    {"name":"Panadol3", "price":"200",	"image":"image", "quantity":"15", "reorder_point":"3", "category_id":"1"},
+    {"name":"Panadol4", "price":"200",	"image":"image1", "quantity":"12", "reorder_point":"3", "category_id":"1"},
+    {"name":"Panadol Advance5", "price":"300",	"image":"image1", "quantity":"15", "reorder_point":"3", "category_id":"1"}
 ]
 
 
@@ -110,18 +110,8 @@ sample_item_updates=[
 class Test_Items(Store_Manager_Base):
     #GET ALL ITEMS TESTS
 
-
-    def test_items_retrive_all_no_item(self):
-        self.token = store_manager.sign_in_admin()
-        response= self.test_client.get('/api/v2/items',content_type='application/json', headers=dict(Authorization=self.token))
-        msg = json.loads(response.data.decode('utf-8'))
-        assert(msg['status'] == "not found")
-        assert(response.status_code==404)
-
-
     def test_items_retrive_all_successfully(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.get('/api/v2/items',content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "ok")
@@ -192,12 +182,11 @@ class Test_Items(Store_Manager_Base):
         self.token = store_manager.sign_in_admin()
         response= self.test_client.post('/api/v2/add_item', data=json.dumps(sample_item[8]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
-        assert(msg['status'] == "not acceptable")
-        assert(response.status_code==406)
+        assert(msg['status'] == "not found")
+        assert(response.status_code==404)
 
     def test_items_successfully(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_category_helper()
         response= self.test_client.post('/api/v2/add_item', data=json.dumps(sample_item[9]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "created")
@@ -212,8 +201,6 @@ class Test_Items(Store_Manager_Base):
     def test_get_item_negative_identifier(self):
         self.token = store_manager.sign_in_admin()
         response= self.test_client.get('/api/v2/items/-1' ,content_type='application/json', headers=dict(Authorization=self.token))
-        msg = json.loads(response.data.decode('utf-8'))
-        assert(msg['status'] == "not found")
         assert(response.status_code == 404)
 
     def test_get_item_not_created(self):
@@ -225,7 +212,6 @@ class Test_Items(Store_Manager_Base):
 
     def test_get_item_successfully(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.get('/api/v2/items/1' ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "ok")
@@ -248,7 +234,6 @@ class Test_Items(Store_Manager_Base):
 
     def test_items_update_price_not_digit(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[1]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "not acceptable")
@@ -256,31 +241,13 @@ class Test_Items(Store_Manager_Base):
 
     def test_items_update_price_not_digit1(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[2]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "not acceptable")
         assert(response.status_code==406)
-        
-    def test_items_update_item_name_not_str(self):
-        self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
-        response= self.test_client.put('/api/v2/add_item', data=json.dumps(sample_item_updates[3]) ,content_type='application/json', headers=dict(Authorization=self.token))
-        msg = json.loads(response.data.decode('utf-8'))
-        assert(msg['status'] == "not acceptable")
-        assert(response.status_code==406)
-
-    def test_items_update_item_name_empty(self):
-        self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
-        response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[4]) ,content_type='application/json', headers=dict(Authorization=self.token))
-        msg = json.loads(response.data.decode('utf-8'))
-        assert(msg['status'] == "not acceptable")
-        assert(response.status_code==406)
-
+       
     def test_items_update_quantity_not_digit(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[5]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "not acceptable")
@@ -288,7 +255,6 @@ class Test_Items(Store_Manager_Base):
 
     def test_items_update_quantity_not_digit1(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[6]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "not acceptable")
@@ -296,15 +262,13 @@ class Test_Items(Store_Manager_Base):
 
     def test_update_item_empty(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[7]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
-        assert(msg['status'] == "forbidden")
-        assert(response.status_code==403)
+        assert(msg['status'] == "not acceptable")
+        assert(response.status_code==406)
 
     def test_update_item_price_only_successfully(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[8]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "created")
@@ -312,7 +276,6 @@ class Test_Items(Store_Manager_Base):
 
     def test_update_item_name_only_successfully(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[9]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "created")
@@ -320,7 +283,6 @@ class Test_Items(Store_Manager_Base):
 
     def test_update_item_quantity_only_successfully(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[10]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "created")
@@ -328,7 +290,6 @@ class Test_Items(Store_Manager_Base):
 
     def test_update_item_image_only_successfully(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[11]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "created")
@@ -336,7 +297,6 @@ class Test_Items(Store_Manager_Base):
 
     def test_update_item_all_successfully(self):
         self.token = store_manager.sign_in_admin()
-        store_manager.add_items_helper()
         response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[12]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "created")
@@ -362,7 +322,7 @@ class Test_Items(Store_Manager_Base):
     def test_delete_item_successfully(self):
         self.token = store_manager.sign_in_admin()
         store_manager.add_items_helper()
-        response= self.test_client.delete('/api/v2/items/1' ,content_type='application/json', headers=dict(Authorization=self.token))
+        response= self.test_client.delete('/api/v2/items/2' ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
         assert(msg['status'] == "ok")
         assert(response.status_code == 200)

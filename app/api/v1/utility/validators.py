@@ -190,6 +190,9 @@ def items_checker(request):
     if name == "" or price == "" or image == "" or quantity == "":
         return "all fields must be filled"
 
+    if not quantity.isdigit():
+        return "quantity not valid"
+
     if not price.isdigit():
         return "price not valid"
 
@@ -234,6 +237,10 @@ def items_update_checker(request):
 
     if not price.isdigit():
         return "price not valid"
+
+    if not quantity.isdigit():
+        return "quantity not valid"
+
 
 
 def system_error_items_update(request):
