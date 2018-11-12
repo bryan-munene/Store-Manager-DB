@@ -131,12 +131,6 @@ class Items(object):
                     "message": "Admin User must be logged in"
                 }), 401)
 
-            sys_checks = system_error_items_update(request)
-            if sys_checks:
-                return make_response(jsonify({
-                    "status": "server error",
-                    "message": "we encountered a system error try again"
-                }), 500)
             checks = items_update_checker(request)
             if checks:
                 return make_response(jsonify({
@@ -145,9 +139,8 @@ class Items(object):
                 }), 406)
 
             data = request.get_json()
-            if data:                
-                auth = auth_user['user_id']
-
+            auth = auth_user['user_id']
+           
             item = items_model.get_by_id(item_id)
             if not item:
                 return make_response(
@@ -171,13 +164,13 @@ class Items(object):
                         "status": "not found",
                         "message": "category does not esxist"
                     }), 404)
-                item['category_id'] = data['category_id']
+                item['category'] = data['category_id']
 
 
             price = item['price']
             quantity = item['quantity']
             image = item['image']
-            category_id = item['category_id']
+            category_id = item['category']
             reorder_point = item['reorder_point']
 
 

@@ -228,18 +228,26 @@ def items_update_checker(request):
         return "request not json"
 
     data = request.get_json()
-    price = data['price']
-    image = data['image']
-    quantity = data['quantity']
+    if not data:                
+        return "Please provide an attribute to be updated"
+    
+    if data['price']:
+        price = data['price']
+        if data['price'] == "":
+            return "all fields must be filled"
+        if not price.isdigit():
+            return "price not valid"
 
-    if price == "" or image == "" or quantity == "":
-        return "all fields must be filled"
+    if data['image']:   
+        if data['image'] == "":
+            return "all fields must be filled"
 
-    if not price.isdigit():
-        return "price not valid"
-
-    if not quantity.isdigit():
-        return "quantity not valid"
+    if data['quantity']:    
+        quantity = data['quantity']
+        if data['quantity'] == "":
+            return "all fields must be filled"
+        if not quantity.isdigit():
+            return "quantity not valid"
 
 
 

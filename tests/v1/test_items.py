@@ -264,8 +264,8 @@ class Test_Items(Store_Manager_Base):
         self.token = store_manager.sign_in_admin()
         response= self.test_client.put('/api/v2/items/1', data=json.dumps(sample_item_updates[7]) ,content_type='application/json', headers=dict(Authorization=self.token))
         msg = json.loads(response.data.decode('utf-8'))
-        assert(msg['status'] == "not acceptable")
-        assert(response.status_code==406)
+        assert(msg['status'] == "created")
+        assert(response.status_code==201)
 
     def test_update_item_price_only_successfully(self):
         self.token = store_manager.sign_in_admin()
@@ -319,14 +319,5 @@ class Test_Items(Store_Manager_Base):
         assert(msg['status'] == "not found")
         assert(response.status_code == 404)
 
-    # def test_delete_item_successfully(self):
-    #     self.token = store_manager.sign_in_admin()
-    #     store_manager.add_items_helper()
-    #     response= self.test_client.delete('/api/v2/items/2' ,content_type='application/json', headers=dict(Authorization=self.token))
-    #     msg = json.loads(response.data.decode('utf-8'))
-    #     print(msg)        
-    #     assert(msg['status'] == "ok")
-    #     assert(response.status_code == 200)
-
-
+    
     '''-------------------------------------------------------------------------------------------------------------------------------'''
