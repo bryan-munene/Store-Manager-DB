@@ -5,7 +5,7 @@ class Config(object):
     """Parent configuration class."""
     DEBUG = False
     CSRF_ENABLED = True
-    SECRET_KEY = " \87b\0ha\j&^\*kd\fg4\ugy\8gq\4tt\0nj\bga\g$%\^&*\()d\l*7\*&^\&$%\bjd\bnj\bns\236\7$%\^&*\()i\nkn\fgs\dgj\n4k\*&6\%gb\hbj\fgh\}|p\POI\IUP\dhf\jhb\&*(\!@#\@#l\LMk\ "
+    SECRET_KEY = " sdrftgyhunjkl234567890feyfwiujokpsijegrpkojkhgcfxdghjbkfrsfhngbfv "
     JWT_BLACKLIST_ENABLED = True
     
 
