@@ -5,7 +5,7 @@ class Config(object):
     """Parent configuration class."""
     DEBUG = False
     CSRF_ENABLED = True
-    SECRET_KEY = os.getenv('SECRET')
+    SECRET_KEY = " \87b\0ha\j&^\*kd\fg4\ugy\8gq\4tt\0nj\bga\g$%\^&*\()d\l*7\*&^\&$%\bjd\bnj\bns\236\7$%\^&*\()i\nkn\fgs\dgj\n4k\*&6\%gb\hbj\fgh\}|p\POI\IUP\dhf\jhb\&*(\!@#\@#l\LMk\ "
     JWT_BLACKLIST_ENABLED = True
     
 
@@ -37,7 +37,5 @@ app_config = {
     "development": DevelopmentConfig,
     "testing": TestingConfig,
     "staging": StagingConfig,
-    "production": ProductionConfig,
-    "DATABASE_URL_TEST": "dbname='store_manager_test' host='127.0.0.1' port='5432' user='postgres' password='root'",
-    "DATABASE_URL_LOCAL": "dbname='store_manager' host='127.0.0.1' port='5432' user='postgres' password='root'"
+    "production": ProductionConfig
 }
