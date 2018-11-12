@@ -11,7 +11,7 @@ install:
   - pip install codeclimate-test-reporter
 env:
   - ENV="testing"
-  - SECRET_KEY=" \87b\0ha\j&^\*kd\fg4\ugy\8gq\4tt\0nj\bga\g$%\^&*\()d\l*7\*&^\&$%\bjd\bnj\bns\236\7$%\^&*\()i\nkn\fgs\dgj\n4k\*&6\%gb\hbj\fgh\}|{\POI\IUP\{O}\dhf\jhb\$%^\&*(\!@#\$@!\@#{\}{{\}:{\LMk\ "
+  - SECRET_KEY="\87b\0ha\j&^\*kd\fg4\ugy\8gq\4tt\0nj\bga\g$%\^&*\()d\l*7\*&^\&$%\bjd\bnj\bns\236\7$%\^&*\()i\nkn\fgs\dgj\n4k\*&6\%gb\hbj\fgh\}|{\POI\IUP\{O}\dhf\jhb\$%^\&*(\!@#\$@!\@#{\}{{\}:{\LMk\"
 services:
   - postgresql
 before_script:
