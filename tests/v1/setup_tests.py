@@ -68,7 +68,7 @@ sample_sale = [{
 
 class Store_Manager_Base(unittest.TestCase):
     '''This class configures all the parameters needed for the tests and is inheritted by all other test classes.'''
-    db = DatabaseSetup()
+    db = DatabaseSetup('testing')
     db.drop_tables()
 
     def setUp(self):

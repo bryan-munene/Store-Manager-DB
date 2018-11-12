@@ -8,11 +8,9 @@ from werkzeug.security import generate_password_hash
 from instance.config import app_config
 
 
-config = os.getenv('ENV')
-
 class DatabaseSetup(object):
     '''Sets up db connection'''
-    def __init__(self):
+    def __init__(self, config):
         '''initialize connection and cursor'''
         self.url = app_config[config].SQL_DATABASE_URL
         self.conn = psycopg2.connect(self.url)

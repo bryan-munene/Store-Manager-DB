@@ -24,7 +24,7 @@ def create_app(config):
     app.config["JWT_SECRET_KEY"]= os.getenv('SECRET_KEY')
     jwt.init_app(app)
         
-    db = DatabaseSetup()
+    db = DatabaseSetup(config)
     db.create_tables()
     db.create_default_admin_user()
 
