@@ -10,9 +10,9 @@ install:
   - pip install coveralls codecov
   - pip install codeclimate-test-reporter
 env:
+  - FLASK_APP="run.py"
   - APP_SETTINGS=development
   - ENV=testing
-  - DATABASE_URL_TEST=dbname=store_manager_test host=127.0.0.1 port=5432 user=postgres password=root
   - SECRET_KEY=" \87b\0ha\j&^\*kd\fg4\ugy\8gq\4tt\0nj\bga\g$%\^&*\()d\l*7\*&^\&$%\bjd\bnj\bns\236\7$%\^&*\()i\nkn\fgs\dgj\n4k\*&6\%gb\hbj\fgh\}|{\POI\IUP\{O}\dhf\jhb\$%^\&*(\!@#\$@!\@#{\}{{\}:{\LMk\ "
   - py.test - - cov=tests tests/v1
 services:
