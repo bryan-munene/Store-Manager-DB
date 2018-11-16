@@ -106,7 +106,7 @@ class Sales(object):
                     grand = grand + int(total)
                     items = items + int(num)
 
-            sale = sales_model.add_sales(payment_mode, grand, items, auth)
+            sale = sales_model.add_sales(payment_mode, items, grand, auth)
             sale_id = sales_model.last_sale_id()
             list_sale_items = sale_items_temp
             for sale_item in list_sale_items:
