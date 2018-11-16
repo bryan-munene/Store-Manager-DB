@@ -200,7 +200,7 @@ class SalesModel(ModelSetup):
         model = ModelSetup()
         self.conn = model.conn
         self.cur = model.cur
-        query = """SELECT COUNT(*) FROM sales ORDER BY sale_id DESC LIMIT 5;"""
+        query = """SELECT COUNT(*) FROM sales;"""
         self.cur.execute(query)
         self.sales = self.cur.fetchall()
 
